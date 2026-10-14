@@ -10,6 +10,7 @@ import re
 import zipfile
 import sqlite3
 import uuid
+import itertools
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple, Any
 import pandas as pd
@@ -240,6 +241,31 @@ def init_db(db_path: str = DB_PATH) -> None:
     );
     """)
 
+    # Swimmer split times (from individual swims & relay legs)
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS swim_splits (
+        id TEXT PRIMARY KEY,
+        swimmer_id TEXT NOT NULL REFERENCES swimmers(id) ON DELETE CASCADE,
+        meet_id TEXT NOT NULL REFERENCES meets(id) ON DELETE CASCADE,
+        event_name TEXT NOT NULL,
+        split_distance INTEGER NOT NULL,
+        stroke TEXT NOT NULL,
+        split_seconds REAL NOT NULL,
+        split_display TEXT NOT NULL,
+        is_relay INTEGER DEFAULT 0,
+        relay_leg INTEGER DEFAULT 0,
+        is_excluded INTEGER DEFAULT 0,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(swimmer_id, meet_id, event_name, split_distance, stroke, is_relay, relay_leg)
+    );
+    """)
+
+    # Migration: Ensure is_excluded exists in swim_splits
+    cur.execute("PRAGMA table_info(swim_splits);")
+    split_cols = [c[1] for c in cur.fetchall()]
+    if "is_excluded" not in split_cols:
+        cur.execute("ALTER TABLE swim_splits ADD COLUMN is_excluded INTEGER DEFAULT 0;")
+
     conn.commit()
 
     # Seed SQT standards if empty
@@ -283,6 +309,8 @@ def parse_cl2_content(lines: List[str], team_code: str = "SHS") -> Dict[str, Any
             raw_m_name = line[11:41].strip()
             if raw_m_name:
                 meet_name = raw_m_name
+                if "Spooky Splas" in meet_name:
+                    meet_name = "2026 SES WAKE-CTA Spooky Splash"
             d_raw = line[121:129].strip() if len(line) >= 129 else ""
             if len(d_raw) == 8 and d_raw.isdigit():
                 meet_date = f"{d_raw[4:8]}-{d_raw[0:2]}-{d_raw[2:4]}"
@@ -294,39 +322,66 @@ def parse_cl2_content(lines: List[str], team_code: str = "SHS") -> Dict[str, Any
             break
 
     in_shs = False
+    filter_names = None
     swimmers_dict = {}  # full_name -> dict(first, last, gender, grade)
     indiv_swims = []
     relays = []
+    splits = []
     current_relay = None
+    current_indiv = None
 
     for line in lines:
         if line.startswith("C1"):
             # Match Sardis High School while avoiding Scottsboro (SHS!) or city of Boaz in address
             c1_header = line[:60].upper()
-            in_shs = "SARDIS" in c1_header
+            is_sardis = "SARDIS" in c1_header
+            is_mcsc = ("MCSC" in c1_header) or ("MARSHALL COUNTY" in c1_header)
+            in_shs = is_sardis or is_mcsc
             current_relay = None
+            current_indiv = None
+            if is_mcsc and not is_sardis:
+                filter_names = {
+                    "Lang, Aubrey L": "Aubrey Lang",
+                    "Lang, Coraline A": "Cora Lang",
+                    "Lang, Cora": "Cora Lang",
+                    "Battles, Caleb T": "Caleb Battles",
+                    "Duncan, Jace C": "Jace Duncan",
+                }
+            else:
+                filter_names = None
 
         elif in_shs and (line.startswith("C1") or line.startswith("Z0")):
             in_shs = False
             current_relay = None
+            current_indiv = None
 
         elif in_shs:
             if line.startswith("D0"):
                 current_relay = None
                 raw_name = line[11:39].strip()
                 if not raw_name:
+                    current_indiv = None
                     continue
 
-                if ", " in raw_name:
-                    p = raw_name.split(", ", 1)
-                    full_name = f"{p[1].strip()} {p[0].strip()}"
-                    first_name = p[1].strip()
-                    last_name = p[0].strip()
+                if filter_names is not None:
+                    if raw_name not in filter_names:
+                        current_indiv = None
+                        continue
+                    full_name = filter_names[raw_name]
+                    p = full_name.split(" ", 1)
+                    first_name = p[0]
+                    last_name = p[1] if len(p) > 1 else ""
                 else:
-                    full_name = raw_name
-                    p = raw_name.split(" ", 1)
-                    first_name = p[0].strip()
-                    last_name = p[1].strip() if len(p) > 1 else ""
+                    if ", " in raw_name:
+                        p = raw_name.split(", ", 1)
+                        full_name = f"{p[1].strip()} {p[0].strip()}"
+                        first_name = p[1].strip()
+                        last_name = p[0].strip()
+                    else:
+                        full_name = raw_name
+                        p = raw_name.split(" ", 1)
+                        first_name = p[0].strip()
+                        last_name = p[1].strip() if len(p) > 1 else ""
 
                 grade = line[6:10].strip()
                 gender = line[65].strip().upper()
@@ -346,6 +401,7 @@ def parse_cl2_content(lines: List[str], team_code: str = "SHS") -> Dict[str, Any
                 dist_raw = line[67:71].strip()
                 st_code_raw = line[71:72].strip()
                 if not dist_raw.isdigit() or not st_code_raw.isdigit():
+                    current_indiv = None
                     continue
 
                 dist = int(dist_raw)
@@ -372,8 +428,46 @@ def parse_cl2_content(lines: List[str], team_code: str = "SHS") -> Dict[str, Any
                         "is_dq": is_dq,
                         "round": "F" if f_time_str else "P"
                     })
+                    if not is_dq:
+                        current_indiv = {
+                            "swimmer_name": full_name,
+                            "gender": gender,
+                            "event_name": event_name,
+                            "dist": dist,
+                            "stroke_name": stroke_name,
+                            "time_seconds": sec
+                        }
+                        if dist == 50 and stroke_name == "Free":
+                            splits.append({
+                                "swimmer_name": full_name,
+                                "event_name": event_name,
+                                "split_distance": 50,
+                                "stroke": "Free",
+                                "split_seconds": sec,
+                                "split_display": format_seconds(sec) if not disp_clean else disp_clean,
+                                "is_relay": 0,
+                                "relay_leg": 0
+                            })
+                        elif dist == 100 and stroke_name == "Free":
+                            splits.append({
+                                "swimmer_name": full_name,
+                                "event_name": event_name,
+                                "split_distance": 100,
+                                "stroke": "Free",
+                                "split_seconds": sec,
+                                "split_display": format_seconds(sec) if not disp_clean else disp_clean,
+                                "is_relay": 0,
+                                "relay_leg": 0
+                            })
+                else:
+                    current_indiv = None
 
             elif line.startswith("E0"):
+                current_indiv = None
+                if filter_names is not None:
+                    # MCSC relays are club relays, do not save as Sardis High School relays
+                    current_relay = None
+                    continue
                 # Relay record
                 r_gender = line[20].strip().upper()
                 if r_gender not in ("M", "F"):
@@ -399,13 +493,16 @@ def parse_cl2_content(lines: List[str], team_code: str = "SHS") -> Dict[str, Any
                             "team_letter": team_letter,
                             "time_seconds": sec,
                             "time_display": format_seconds(sec),
-                            "swimmers": []
+                            "swimmers": [],
+                            "prev_cum": 0.0,
+                            "has_prev": True
                         }
                         relays.append(current_relay)
                     else:
                         current_relay = None
 
             elif line.startswith("F0") and current_relay is not None:
+                current_indiv = None
                 # Relay leg swimmer: In Hy-Tek CL2, columns 22:50 contain "Last, First M"
                 leg_name_raw = line[22:50].strip()
                 if ", " in leg_name_raw:
@@ -426,12 +523,99 @@ def parse_cl2_content(lines: List[str], team_code: str = "SHS") -> Dict[str, Any
                             "grade": line[6:10].strip()
                         }
 
+            elif line.startswith("G0"):
+                if current_indiv is not None:
+                    splits_str = line[64:144]
+                    chunks = [re.sub(r"[^\d:.]", "", splits_str[k:k+8].strip()) for k in range(0, len(splits_str), 8)]
+                    if chunks and chunks[0]:
+                        s50_sec = parse_time_str(chunks[0])
+                        if s50_sec is not None and s50_sec > 0:
+                            st = current_indiv["stroke_name"]
+                            if st == "Free" and current_indiv["dist"] > 50:
+                                splits.append({
+                                    "swimmer_name": current_indiv["swimmer_name"],
+                                    "event_name": current_indiv["event_name"],
+                                    "split_distance": 50,
+                                    "stroke": "Free",
+                                    "split_seconds": s50_sec,
+                                    "split_display": format_seconds(s50_sec),
+                                    "is_relay": 0,
+                                    "relay_leg": 0
+                                })
+                            elif st in ("Back", "Breast", "Fly"):
+                                splits.append({
+                                    "swimmer_name": current_indiv["swimmer_name"],
+                                    "event_name": current_indiv["event_name"],
+                                    "split_distance": 50,
+                                    "stroke": st,
+                                    "split_seconds": s50_sec,
+                                    "split_display": format_seconds(s50_sec),
+                                    "is_relay": 0,
+                                    "relay_leg": 0
+                                })
+                            elif st == "IM":
+                                splits.append({
+                                    "swimmer_name": current_indiv["swimmer_name"],
+                                    "event_name": current_indiv["event_name"],
+                                    "split_distance": 50,
+                                    "stroke": "Fly",
+                                    "split_seconds": s50_sec,
+                                    "split_display": format_seconds(s50_sec),
+                                    "is_relay": 0,
+                                    "relay_leg": 0
+                                })
+                    current_indiv = None
+
+                elif current_relay is not None and current_relay["swimmers"]:
+                    leg_num = len(current_relay["swimmers"])
+                    splits_str = line[64:144]
+                    chunks = [re.sub(r"[^\d:.]", "", splits_str[k:k+8].strip()) for k in range(0, len(splits_str), 8)]
+                    v_times = [parse_time_str(c) for c in chunks if parse_time_str(c) is not None]
+                    if v_times and current_relay.get("has_prev", True):
+                        cum_time = v_times[-1]
+                        prev_cum = current_relay.get("prev_cum", 0.0)
+                        split_sec = cum_time - prev_cum
+                        if split_sec > 0:
+                            current_relay["prev_cum"] = cum_time
+                            current_relay["has_prev"] = True
+                            sw_name = current_relay["swimmers"][-1]
+                            is_medley = "Medley" in current_relay["event_name"]
+                            dist = 200 if "200" in current_relay["event_name"] else 400
+                            if is_medley:
+                                m_strokes = {1: "Back", 2: "Breast", 3: "Fly", 4: "Free"}
+                                st = m_strokes.get(leg_num, "Free")
+                                splits.append({
+                                    "swimmer_name": sw_name,
+                                    "event_name": current_relay["event_name"],
+                                    "split_distance": 50,
+                                    "stroke": st,
+                                    "split_seconds": round(split_sec, 2),
+                                    "split_display": format_seconds(split_sec),
+                                    "is_relay": 1,
+                                    "relay_leg": leg_num
+                                })
+                            else:
+                                s_dist = 50 if dist == 200 else 100
+                                splits.append({
+                                    "swimmer_name": sw_name,
+                                    "event_name": current_relay["event_name"],
+                                    "split_distance": s_dist,
+                                    "stroke": "Free",
+                                    "split_seconds": round(split_sec, 2),
+                                    "split_display": format_seconds(split_sec),
+                                    "is_relay": 1,
+                                    "relay_leg": leg_num
+                                })
+                        else:
+                            current_relay["has_prev"] = False
+
     return {
         "meet_name": meet_name,
         "meet_date": meet_date,
         "swimmers": swimmers_dict,
         "indiv_swims": indiv_swims,
-        "relays": relays
+        "relays": relays,
+        "splits": splits
     }
 
 
@@ -534,6 +718,34 @@ def import_cl2_file(file_path: str, db_path: str = DB_PATH) -> Dict[str, Any]:
         ))
         relays_imported += 1
 
+    # 5. Upsert Splits
+    splits_imported = 0
+    for sp in data.get("splits", []):
+        sp_id = str(uuid.uuid4())
+        s_id = swimmer_id_map.get(sp["swimmer_name"])
+        if not s_id:
+            continue
+        cur.execute("""
+        INSERT INTO swim_splits
+        (id, swimmer_id, meet_id, event_name, split_distance, stroke, split_seconds, split_display, is_relay, relay_leg)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(swimmer_id, meet_id, event_name, split_distance, stroke, is_relay, relay_leg) DO UPDATE SET
+            split_seconds = excluded.split_seconds,
+            split_display = excluded.split_display;
+        """, (
+            sp_id,
+            s_id,
+            actual_meet_id,
+            sp["event_name"],
+            sp["split_distance"],
+            sp["stroke"],
+            sp["split_seconds"],
+            sp["split_display"],
+            sp["is_relay"],
+            sp["relay_leg"]
+        ))
+        splits_imported += 1
+
     conn.commit()
     conn.close()
 
@@ -542,7 +754,8 @@ def import_cl2_file(file_path: str, db_path: str = DB_PATH) -> Dict[str, Any]:
         "meet_date": data["meet_date"],
         "swimmers_count": len(swimmer_id_map),
         "swims_imported": swims_imported,
-        "relays_imported": relays_imported
+        "relays_imported": relays_imported,
+        "splits_imported": splits_imported
     }
 
 
@@ -734,6 +947,337 @@ def get_relay_bests_df(db_path: str = DB_PATH) -> pd.DataFrame:
     df["is_qualified"] = df["diff_sec"] <= 0
     df["status"] = df["diff_sec"].apply(lambda d: "QUALIFIED" if d <= 0 else (f"+{d:.2f}s" if pd.notna(d) else "No Standard"))
     return df
+
+
+def get_swimmer_best_splits(
+    gender: Optional[str] = None,
+    split_distance: Optional[int] = None,
+    stroke: Optional[str] = None,
+    db_path: str = DB_PATH
+) -> pd.DataFrame:
+    """
+    Returns the fastest split time for each swimmer by stroke and distance,
+    omitting any excluded splits.
+    """
+    init_db(db_path)
+    conn = get_connection(db_path)
+
+    query = """
+    SELECT 
+        s.id as swimmer_id,
+        s.full_name,
+        s.gender,
+        sp.stroke,
+        sp.split_distance,
+        MIN(sp.split_seconds) as best_seconds
+    FROM swim_splits sp
+    JOIN swimmers s ON sp.swimmer_id = s.id
+    WHERE sp.is_excluded = 0
+    """
+    params = []
+    if gender in ("M", "F"):
+        query += " AND s.gender = ?"
+        params.append(gender)
+    query += """
+    GROUP BY s.id, sp.stroke, sp.split_distance
+    ORDER BY s.gender, s.full_name, sp.stroke, sp.split_distance;
+    """
+    df = pd.read_sql(query, conn, params=params)
+    conn.close()
+
+    if not df.empty:
+        df["best_display"] = df["best_seconds"].apply(format_seconds)
+    return df
+
+
+def get_relay_permutations_df(
+    event_name: str,
+    gender: str,
+    db_path: str = DB_PATH
+) -> pd.DataFrame:
+    """
+    Generates all valid relay permutations/combinations for an event and gender,
+    sorted from fast to slow (ascending time).
+    
+    Uses each swimmer's fastest recorded relay split and fastest recorded individual 50 split
+    (or 100 Free time for 400 Free Relay), excluding any splits marked is_excluded = 1.
+    
+    - For 200 Free Relay & 400 Free Relay: Generates unique 4-swimmer combinations (sorted by combined time).
+    - For 200 Medley Relay: Assigns Back, Breast, Fly, Free to 4 distinct swimmers who have recorded times for those strokes.
+    """
+    init_db(db_path)
+    conn = get_connection(db_path)
+
+    cur = conn.cursor()
+    cur.execute("SELECT COUNT(*) FROM swim_splits;")
+    if cur.fetchone()[0] == 0:
+        conn.close()
+        import_all_meets_in_times(db_path=db_path)
+        conn = get_connection(db_path)
+        cur = conn.cursor()
+
+    # Get SQT Cut standard
+    cur.execute("""
+    SELECT cut_seconds, cut_display 
+    FROM sqt_standards 
+    WHERE event_name = ? AND gender = ? AND is_relay = 1;
+    """, (event_name, gender))
+    std_row = cur.fetchone()
+    cut_sec = std_row[0] if std_row else None
+    cut_disp = std_row[1] if std_row else "N/A"
+
+    # Get best splits for all swimmers of this gender, omitting excluded splits
+    cur.execute("""
+    SELECT 
+        s.full_name,
+        sp.stroke,
+        sp.split_distance,
+        MIN(sp.split_seconds) as best_sec
+    FROM swim_splits sp
+    JOIN swimmers s ON sp.swimmer_id = s.id
+    WHERE s.gender = ? AND sp.is_excluded = 0
+    GROUP BY s.id, sp.stroke, sp.split_distance;
+    """, (gender,))
+    rows = cur.fetchall()
+    conn.close()
+
+    swimmer_bests: Dict[str, Dict[Tuple[str, int], float]] = {}
+    for sw_name, stroke, dist, sec in rows:
+        if sw_name not in swimmer_bests:
+            swimmer_bests[sw_name] = {}
+        swimmer_bests[sw_name][(stroke, dist)] = sec
+
+    results = []
+
+    if event_name == "200 Free Relay":
+        pool = [sw for sw, d in swimmer_bests.items() if ("Free", 50) in d]
+        if len(pool) >= 4:
+            for squad in itertools.combinations(pool, 4):
+                sorted_squad = sorted(squad, key=lambda sw: swimmer_bests[sw][("Free", 50)])
+                t1 = swimmer_bests[sorted_squad[0]][("Free", 50)]
+                t2 = swimmer_bests[sorted_squad[1]][("Free", 50)]
+                t3 = swimmer_bests[sorted_squad[2]][("Free", 50)]
+                t4 = swimmer_bests[sorted_squad[3]][("Free", 50)]
+                tot = t1 + t2 + t3 + t4
+                results.append({
+                    "event_name": event_name,
+                    "gender": gender,
+                    "projected_seconds": round(tot, 2),
+                    "leg1_name": sorted_squad[0],
+                    "leg1_split": t1,
+                    "leg1_stroke": "Free",
+                    "leg2_name": sorted_squad[1],
+                    "leg2_split": t2,
+                    "leg2_stroke": "Free",
+                    "leg3_name": sorted_squad[2],
+                    "leg3_split": t3,
+                    "leg3_stroke": "Free",
+                    "leg4_name": sorted_squad[3],
+                    "leg4_split": t4,
+                    "leg4_stroke": "Free"
+                })
+
+    elif event_name == "400 Free Relay":
+        pool = [sw for sw, d in swimmer_bests.items() if ("Free", 100) in d]
+        if len(pool) >= 4:
+            for squad in itertools.combinations(pool, 4):
+                sorted_squad = sorted(squad, key=lambda sw: swimmer_bests[sw][("Free", 100)])
+                t1 = swimmer_bests[sorted_squad[0]][("Free", 100)]
+                t2 = swimmer_bests[sorted_squad[1]][("Free", 100)]
+                t3 = swimmer_bests[sorted_squad[2]][("Free", 100)]
+                t4 = swimmer_bests[sorted_squad[3]][("Free", 100)]
+                tot = t1 + t2 + t3 + t4
+                results.append({
+                    "event_name": event_name,
+                    "gender": gender,
+                    "projected_seconds": round(tot, 2),
+                    "leg1_name": sorted_squad[0],
+                    "leg1_split": t1,
+                    "leg1_stroke": "Free",
+                    "leg2_name": sorted_squad[1],
+                    "leg2_split": t2,
+                    "leg2_stroke": "Free",
+                    "leg3_name": sorted_squad[2],
+                    "leg3_split": t3,
+                    "leg3_stroke": "Free",
+                    "leg4_name": sorted_squad[3],
+                    "leg4_split": t4,
+                    "leg4_stroke": "Free"
+                })
+
+    elif event_name == "200 Medley Relay":
+        back_pool = [sw for sw, d in swimmer_bests.items() if ("Back", 50) in d]
+        breast_pool = [sw for sw, d in swimmer_bests.items() if ("Breast", 50) in d]
+        fly_pool = [sw for sw, d in swimmer_bests.items() if ("Fly", 50) in d]
+        free_pool = [sw for sw, d in swimmer_bests.items() if ("Free", 50) in d]
+
+        if back_pool and breast_pool and fly_pool and free_pool:
+            for b, br, fl, fr in itertools.product(back_pool, breast_pool, fly_pool, free_pool):
+                if len({b, br, fl, fr}) == 4:
+                    t1 = swimmer_bests[b][("Back", 50)]
+                    t2 = swimmer_bests[br][("Breast", 50)]
+                    t3 = swimmer_bests[fl][("Fly", 50)]
+                    t4 = swimmer_bests[fr][("Free", 50)]
+                    tot = t1 + t2 + t3 + t4
+                    results.append({
+                        "event_name": event_name,
+                        "gender": gender,
+                        "projected_seconds": round(tot, 2),
+                        "leg1_name": b,
+                        "leg1_split": t1,
+                        "leg1_stroke": "Back",
+                        "leg2_name": br,
+                        "leg2_split": t2,
+                        "leg2_stroke": "Breast",
+                        "leg3_name": fl,
+                        "leg3_split": t3,
+                        "leg3_stroke": "Fly",
+                        "leg4_name": fr,
+                        "leg4_split": t4,
+                        "leg4_stroke": "Free"
+                    })
+
+    if not results:
+        return pd.DataFrame(columns=[
+            "rank", "event_name", "gender", "projected_seconds", "projected_display",
+            "cut_seconds", "cut_display", "diff_sec", "diff_pct", "is_qualified", "status",
+            "leg1_name", "leg1_split", "leg1_display", "leg1_stroke",
+            "leg2_name", "leg2_split", "leg2_display", "leg2_stroke",
+            "leg3_name", "leg3_split", "leg3_display", "leg3_stroke",
+            "leg4_name", "leg4_split", "leg4_display", "leg4_stroke",
+            "lineup_display"
+        ])
+
+    df = pd.DataFrame(results)
+    df = df.sort_values(by="projected_seconds", ascending=True).reset_index(drop=True)
+    df["rank"] = df.index + 1
+    df["projected_display"] = df["projected_seconds"].apply(format_seconds)
+    df["cut_seconds"] = cut_sec
+    df["cut_display"] = cut_disp
+
+    if cut_sec is not None:
+        df["diff_sec"] = df["projected_seconds"] - cut_sec
+        df["diff_pct"] = (df["diff_sec"] / cut_sec) * 100.0
+        df["is_qualified"] = df["diff_sec"] <= 0
+        df["status"] = df["diff_sec"].apply(
+            lambda d: "QUALIFIED" if d <= 0 else f"+{d:.2f}s"
+        )
+    else:
+        df["diff_sec"] = np.nan
+        df["diff_pct"] = np.nan
+        df["is_qualified"] = False
+        df["status"] = "No Standard"
+
+    for leg in [1, 2, 3, 4]:
+        df[f"leg{leg}_display"] = df[f"leg{leg}_split"].apply(
+            lambda s: format_seconds(s) if s >= 60 else f"{s:.2f}"
+        )
+
+    if "Medley" in event_name:
+        df["lineup_display"] = df.apply(
+            lambda r: f"1. Back: {r['leg1_name']} ({r['leg1_display']}) • 2. Breast: {r['leg2_name']} ({r['leg2_display']}) • 3. Fly: {r['leg3_name']} ({r['leg3_display']}) • 4. Free: {r['leg4_name']} ({r['leg4_display']})",
+            axis=1
+        )
+    else:
+        df["lineup_display"] = df.apply(
+            lambda r: f"1. {r['leg1_name']} ({r['leg1_display']}) • 2. {r['leg2_name']} ({r['leg2_display']}) • 3. {r['leg3_name']} ({r['leg3_display']}) • 4. {r['leg4_name']} ({r['leg4_display']})",
+            axis=1
+        )
+
+    return df
+
+
+def get_all_splits_df(
+    swimmer_id: Optional[str] = None,
+    gender: Optional[str] = None,
+    stroke: Optional[str] = None,
+    meet_id: Optional[str] = None,
+    db_path: str = DB_PATH
+) -> pd.DataFrame:
+    """
+    Returns all logged swimmer splits with meet, event, stroke, distance,
+    and exclusion status for administrative review.
+    """
+    init_db(db_path)
+    conn = get_connection(db_path)
+
+    query = """
+    SELECT 
+        sp.id as split_id,
+        s.id as swimmer_id,
+        s.full_name as swimmer_name,
+        s.gender,
+        m.id as meet_id,
+        m.meet_name,
+        m.meet_date,
+        sp.event_name,
+        sp.stroke,
+        sp.split_distance,
+        sp.split_seconds,
+        sp.split_display,
+        sp.is_relay,
+        sp.relay_leg,
+        sp.is_excluded
+    FROM swim_splits sp
+    JOIN swimmers s ON sp.swimmer_id = s.id
+    JOIN meets m ON sp.meet_id = m.id
+    WHERE 1=1
+    """
+    params = []
+    if swimmer_id:
+        query += " AND s.id = ?"
+        params.append(swimmer_id)
+    if gender in ("M", "F"):
+        query += " AND s.gender = ?"
+        params.append(gender)
+    if stroke:
+        query += " AND sp.stroke = ?"
+        params.append(stroke)
+    if meet_id:
+        query += " AND m.id = ?"
+        params.append(meet_id)
+
+    query += " ORDER BY s.full_name ASC, sp.stroke ASC, sp.split_seconds ASC;"
+    df = pd.read_sql(query, conn, params=params)
+    conn.close()
+
+    if not df.empty:
+        df["type_display"] = df.apply(
+            lambda r: f"Relay (Leg {r['relay_leg']})" if r["is_relay"] == 1 else "Individual Swim",
+            axis=1
+        )
+        df["status_display"] = df["is_excluded"].apply(
+            lambda x: "Excluded 🚫" if x == 1 else "Active ✅"
+        )
+    return df
+
+
+def set_split_exclusion(split_id: str, is_excluded: bool, db_path: str = DB_PATH) -> bool:
+    """
+    Sets the is_excluded flag for a split. Excluded splits are ignored when generating relay permutations.
+    """
+    init_db(db_path)
+    conn = get_connection(db_path)
+    cur = conn.cursor()
+    cur.execute("UPDATE swim_splits SET is_excluded = ? WHERE id = ?;", (1 if is_excluded else 0, split_id))
+    updated = cur.rowcount > 0
+    conn.commit()
+    conn.close()
+    return updated
+
+
+def delete_split(split_id: str, db_path: str = DB_PATH) -> bool:
+    """
+    Permanently deletes a split record from the database.
+    """
+    init_db(db_path)
+    conn = get_connection(db_path)
+    cur = conn.cursor()
+    cur.execute("DELETE FROM swim_splits WHERE id = ?;", (split_id,))
+    deleted = cur.rowcount > 0
+    conn.commit()
+    conn.close()
+    return deleted
 
 
 def get_swimmer_progression_df(swimmer_id: str, db_path: str = DB_PATH) -> pd.DataFrame:
@@ -1105,7 +1649,7 @@ def export_data_to_csv(data_dir: str = DATA_DIR, db_path: str = DB_PATH) -> None
     os.makedirs(data_dir, exist_ok=True)
     conn = get_connection(db_path)
 
-    tables = ["swimmers", "sqt_standards", "meets", "swim_times", "relays"]
+    tables = ["swimmers", "sqt_standards", "meets", "swim_times", "relays", "swim_splits"]
     for tbl in tables:
         try:
             df = pd.read_sql(f"SELECT * FROM {tbl};", conn)

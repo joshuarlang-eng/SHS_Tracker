@@ -1107,6 +1107,265 @@ def tab_relays():
             </div>
             """, unsafe_allow_html=True)
 
+    # -------------------------------------------------------------------------
+    # Relay Permutations & Optimal Lineups
+    # -------------------------------------------------------------------------
+    st.markdown("---")
+    st.subheader("⚡ Projected Relay Permutations & Optimal Lineups")
+    st.markdown(
+        "Explore all possible relay combinations and stroke permutations sorted from **fast to slow**. "
+        "Calculated by combining each swimmer's fastest recorded relay split with their fastest recorded individual 50 split "
+        "(or 100 Free time for the 400 Free Relay)."
+    )
+
+    p_col1, p_col2, p_col3 = st.columns([1, 1, 1])
+    with p_col1:
+        sel_gender_label = st.radio("Gender", ["🏊‍♂️ Boys", "🏊‍♀️ Girls"], horizontal=True, key="relay_perm_gender")
+        sel_gender = "M" if "Boys" in sel_gender_label else "F"
+
+    with p_col2:
+        relay_events = ["200 Free Relay", "200 Medley Relay", "400 Free Relay"]
+        sel_event = st.selectbox("Relay Event", relay_events, key="relay_perm_event")
+
+    perms_df = db.get_relay_permutations_df(sel_event, sel_gender)
+
+    with p_col3:
+        all_swimmers = set()
+        if not perms_df.empty:
+            for col in ["leg1_name", "leg2_name", "leg3_name", "leg4_name"]:
+                all_swimmers.update(perms_df[col].dropna().unique())
+        swimmer_options = ["All Swimmers"] + sorted(list(all_swimmers))
+        sel_swimmer = st.selectbox("Filter by Swimmer", swimmer_options, key="relay_perm_swimmer")
+
+    if perms_df.empty:
+        st.warning(f"Not enough swimmers with recorded times to form a {sel_gender_label} {sel_event}.")
+        with st.expander("🛠️ Manage Swimmer Splits & Exclude Bad Splits", expanded=False):
+            render_splits_manager(default_gender=sel_gender, key_prefix="relays")
+        return
+
+    # Filter by swimmer if selected
+    filtered_df = perms_df.copy()
+    if sel_swimmer != "All Swimmers":
+        mask = (
+            (filtered_df["leg1_name"] == sel_swimmer) |
+            (filtered_df["leg2_name"] == sel_swimmer) |
+            (filtered_df["leg3_name"] == sel_swimmer) |
+            (filtered_df["leg4_name"] == sel_swimmer)
+        )
+        filtered_df = filtered_df[mask].reset_index(drop=True)
+
+    # Top Optimal Lineup vs Current Season Best Comparison Cards
+    top_perm = perms_df.iloc[0]
+
+    actual_bests = relays_df[(relays_df["gender"] == sel_gender) & (relays_df["event_name"] == sel_event)]
+    actual_best_row = actual_bests.iloc[0] if not actual_bests.empty else None
+
+    m1, m2, m3, m4 = st.columns(4)
+    with m1:
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-value" style="color: #38BDF8;">{top_perm['projected_display']}</div>
+            <div class="metric-label">🥇 Optimal Projected Time</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with m2:
+        act_disp = actual_best_row['best_display'] if actual_best_row is not None else "None Logged"
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-value" style="color: #FFFFFF;">{act_disp}</div>
+            <div class="metric-label">⏱️ Season Best Swum</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with m3:
+        if actual_best_row is not None:
+            imp_sec = actual_best_row['best_seconds'] - top_perm['projected_seconds']
+            if imp_sec > 0:
+                imp_text = f"-{imp_sec:.2f}s"
+                imp_color = "#10B981"
+            elif imp_sec < 0:
+                imp_text = f"+{abs(imp_sec):.2f}s"
+                imp_color = "#F59E0B"
+            else:
+                imp_text = "0.00s (Matched)"
+                imp_color = "#38BDF8"
+        else:
+            imp_text = "N/A"
+            imp_color = GRAY_MID
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-value" style="color: {imp_color};">{imp_text}</div>
+            <div class="metric-label">🚀 Projected Improvement</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with m4:
+        cut_disp = top_perm['cut_display']
+        if pd.notna(top_perm['cut_seconds']):
+            if top_perm['is_qualified']:
+                status_html = f'<span class="badge-qual">QUALIFIED ⭐ {top_perm["status"]}</span>'
+            else:
+                status_html = f'<span class="badge-close-1s" style="border-color: #F59E0B; color: #F59E0B;">{top_perm["status"]} Off Cut</span>'
+        else:
+            status_html = '<span class="badge-close-2s">No Standard</span>'
+        st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-value" style="font-size: 24px; color: #FFFFFF;">{cut_disp}</div>
+            <div class="metric-label">🎯 SQT Standard Cut</div>
+            <div style="margin-top: 6px;">{status_html}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # Highlight Optimal Lineup
+    st.markdown(f"""
+    <div style="background: rgba(20, 24, 36, 0.9); border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 10px; padding: 14px 18px; margin: 16px 0;">
+        <span style="font-weight: 700; color: #38BDF8; font-size: 14px;">⚡ OPTIMAL PROJECTED LINEUP:</span>
+        <span style="color: #F3F4F6; font-size: 14px; margin-left: 8px;">{top_perm['lineup_display']}</span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Interactive Table
+    is_medley = "Medley" in sel_event
+    table_rows = []
+    for _, row in filtered_df.iterrows():
+        if is_medley:
+            l1 = f"Back: {row['leg1_name']} ({row['leg1_display']})"
+            l2 = f"Breast: {row['leg2_name']} ({row['leg2_display']})"
+            l3 = f"Fly: {row['leg3_name']} ({row['leg3_display']})"
+            l4 = f"Free: {row['leg4_name']} ({row['leg4_display']})"
+        else:
+            l1 = f"{row['leg1_name']} ({row['leg1_display']})"
+            l2 = f"{row['leg2_name']} ({row['leg2_display']})"
+            l3 = f"{row['leg3_name']} ({row['leg3_display']})"
+            l4 = f"{row['leg4_name']} ({row['leg4_display']})"
+
+        table_rows.append({
+            "Rank": f"#{int(row['rank'])}",
+            "Projected Time": row["projected_display"],
+            "SQT Cut Status": row["status"] if not row["is_qualified"] else "QUALIFIED ⭐",
+            "Leg 1": l1,
+            "Leg 2": l2,
+            "Leg 3": l3,
+            "Leg 4": l4,
+        })
+
+    display_df = pd.DataFrame(table_rows)
+
+    c_left, c_right = st.columns([3, 1])
+    with c_left:
+        st.markdown(f"**Showing {len(display_df)} permutation{'s' if len(display_df) != 1 else ''}** (sorted fast to slow):")
+    with c_right:
+        csv_data = filtered_df[[
+            "rank", "event_name", "gender", "projected_display", "status",
+            "leg1_name", "leg1_display", "leg2_name", "leg2_display",
+            "leg3_name", "leg3_display", "leg4_name", "leg4_display"
+        ]].to_csv(index=False)
+        st.download_button(
+            "📥 Export Permutations CSV",
+            data=csv_data,
+            file_name=f"{sel_gender}_{sel_event.replace(' ', '_')}_permutations.csv",
+            mime="text/csv",
+            use_container_width=True
+        )
+
+    st.dataframe(
+        display_df,
+        use_container_width=True,
+        hide_index=True,
+        height=min(450, 40 + len(display_df) * 36)
+    )
+
+    # Bad Split Exclusion Tool
+    with st.expander("🛠️ Manage Swimmer Splits & Exclude Bad Splits", expanded=False):
+        render_splits_manager(default_gender=sel_gender, key_prefix="relays")
+
+
+def render_splits_manager(default_gender: Optional[str] = None, key_prefix: str = "relays"):
+    """
+    Renders an administrative tool to inspect, filter, exclude, or restore individual split times.
+    """
+    st.markdown(
+        "Occasionally a touchpad error, missed touch, or timing anomaly produces an invalid split time. "
+        "Use this tool to exclude bad splits from all relay calculations. Excluded splits remain in the database for reference but are omitted from relay permutations."
+    )
+
+    all_splits_df = db.get_all_splits_df(gender=default_gender)
+    if all_splits_df.empty:
+        st.info("No splits recorded yet.")
+        return
+
+    f_col1, f_col2, f_col3 = st.columns(3)
+    with f_col1:
+        sw_filter_list = ["All Swimmers"] + sorted(all_splits_df["swimmer_name"].unique().tolist())
+        m_swimmer = st.selectbox("Filter Swimmer", sw_filter_list, key=f"{key_prefix}_m_swimmer")
+    with f_col2:
+        m_stroke = st.selectbox("Filter Stroke", ["All Strokes", "Free", "Back", "Breast", "Fly"], key=f"{key_prefix}_m_stroke")
+    with f_col3:
+        m_status = st.selectbox("Filter Status", ["All", "Active Only", "Excluded Only"], key=f"{key_prefix}_m_status")
+
+    view_df = all_splits_df.copy()
+    if m_swimmer != "All Swimmers":
+        view_df = view_df[view_df["swimmer_name"] == m_swimmer]
+    if m_stroke != "All Strokes":
+        view_df = view_df[view_df["stroke"] == m_stroke]
+    if m_status == "Active Only":
+        view_df = view_df[view_df["is_excluded"] == 0]
+    elif m_status == "Excluded Only":
+        view_df = view_df[view_df["is_excluded"] == 1]
+
+    st.dataframe(
+        view_df[[
+            "swimmer_name", "meet_name", "event_name", "stroke",
+            "split_distance", "split_display", "type_display", "status_display"
+        ]].rename(columns={
+            "swimmer_name": "Swimmer",
+            "meet_name": "Meet",
+            "event_name": "Event",
+            "stroke": "Stroke",
+            "split_distance": "Dist (yd)",
+            "split_display": "Split Time",
+            "type_display": "Type",
+            "status_display": "Status"
+        }),
+        use_container_width=True,
+        hide_index=True,
+        height=min(260, 40 + len(view_df) * 36)
+    )
+
+    st.markdown("##### ⚡ Quick Exclude / Restore Action")
+    if not view_df.empty:
+        split_choices = {}
+        for _, r in view_df.iterrows():
+            lbl = f"{r['swimmer_name']} • {r['stroke']} {r['split_distance']}y ({r['split_display']}) @ {r['meet_name']} [{r['type_display']}] — {r['status_display']}"
+            split_choices[lbl] = r
+
+        selected_split_label = st.selectbox(
+            "Select a split to toggle exclusion:",
+            list(split_choices.keys()),
+            key=f"{key_prefix}_select_split"
+        )
+        selected_row = split_choices[selected_split_label]
+
+        act_col1, act_col2, act_col3 = st.columns([1, 1, 2])
+        with act_col1:
+            if st.button("🚫 Exclude Split", key=f"{key_prefix}_btn_exclude", use_container_width=True, disabled=(selected_row["is_excluded"] == 1)):
+                db.set_split_exclusion(selected_row["split_id"], True)
+                db.export_data_to_csv()
+                st.success(f"Excluded {selected_row['swimmer_name']}'s {selected_row['split_display']} split!")
+                st.rerun()
+        with act_col2:
+            if st.button("🔄 Restore Split", key=f"{key_prefix}_btn_restore", use_container_width=True, disabled=(selected_row["is_excluded"] == 0)):
+                db.set_split_exclusion(selected_row["split_id"], False)
+                db.export_data_to_csv()
+                st.success(f"Restored {selected_row['swimmer_name']}'s {selected_row['split_display']} split!")
+                st.rerun()
+        with act_col3:
+            if selected_row["is_excluded"] == 1:
+                st.info(f"Split is currently **Excluded 🚫** and omitted from relay permutations.")
+            else:
+                st.caption(f"Split is currently **Active ✅** and factored into relay permutations.")
+
 
 # -----------------------------------------------------------------------------
 # Tab 6: Meets & Data Manager
@@ -1164,6 +1423,10 @@ def tab_data_manager():
         if st.button("💾 Export SQLite Tables to CSV"):
             db.export_data_to_csv()
             st.success("CSVs exported to data/ folder for diffable backup!")
+
+    st.write("")
+    st.markdown("#### ⏱️ Swimmer Split Times & Exclusion Manager")
+    render_splits_manager(default_gender=None, key_prefix="datamanager")
 
 
 # -----------------------------------------------------------------------------
