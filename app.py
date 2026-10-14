@@ -6,6 +6,7 @@ Colors: Sardis Crimson (#8B0526) and Athletic Gray (#9CA3AF)
 
 import os
 import base64
+from typing import Optional, List, Dict, Any
 import pandas as pd
 import numpy as np
 import altair as alt
