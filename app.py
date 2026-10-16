@@ -470,41 +470,6 @@ def tab_bubble_watch():
     # Sort so closest to cut comes first
     filtered_df = filtered_df.sort_values(by=["is_qualified", "diff_pct"], ascending=[False, True]).reset_index(drop=True)
 
-    # Differential Chart
-    if not filtered_df.empty:
-        chart_data = filtered_df.head(20).copy()
-        chart_data["label"] = chart_data["swimmer_name"] + " (" + chart_data["event_name"] + ")"
-        
-        def get_bar_color(row):
-            if row["diff_pct"] <= 0:
-                return MAROON
-            elif row["diff_pct"] <= 2.5:
-                return GREEN
-            elif row["diff_pct"] <= 5.0:
-                return BLUE
-            else:
-                return GRAY_MID
-
-        chart_data["bar_color"] = chart_data.apply(get_bar_color, axis=1)
-
-        chart = alt.Chart(chart_data).mark_bar(cornerRadiusEnd=4).encode(
-            x=alt.X("diff_pct:Q", title="Differential to SQT (%) — (Negative = Under Cut)"),
-            y=alt.Y("label:N", sort=None, title=None),
-            color=alt.Color("bar_color:N", scale=None),
-            tooltip=[
-                alt.Tooltip("swimmer_name:N", title="Swimmer"),
-                alt.Tooltip("event_name:N", title="Event"),
-                alt.Tooltip("best_display:N", title="Season Best"),
-                alt.Tooltip("cut_display:N", title="SQT Standard"),
-                alt.Tooltip("diff_sec:Q", title="Diff (Seconds)", format="+.2f"),
-                alt.Tooltip("diff_pct:Q", title="Diff (%)", format="+.1f%")
-            ]
-        ).properties(height=max(280, len(chart_data) * 24), title="Top Swimmers Proximity to State Qualifying Standard")
-
-        # Zero reference line
-        rule = alt.Chart(pd.DataFrame({'x': [0]})).mark_rule(color="#F59E0B", strokeWidth=2, strokeDash=[4, 4]).encode(x='x:Q')
-        st.altair_chart(chart + rule, use_container_width=True)
-
     # Display Table with custom status rendering
     st.markdown("#### 📋 Detailed Differential Leaderboard")
     display_df = filtered_df[[
@@ -736,40 +701,6 @@ def tab_swimmer_view():
     if display_df.empty:
         st.info("No events match the selected status filter.")
     else:
-        # Altair Proximity Chart
-        chart_data = display_df.copy()
-        chart_data["label"] = chart_data["event_name"] + " (" + chart_data["best_display"] + ")"
-
-        def get_chart_bar_color(row):
-            if row["diff_pct"] <= 0:
-                return MAROON
-            elif row["diff_pct"] <= 2.5:
-                return GREEN
-            elif row["diff_pct"] <= 5.0:
-                return BLUE
-            else:
-                return GRAY_MID
-
-        chart_data["bar_color"] = chart_data.apply(get_chart_bar_color, axis=1)
-
-        chart = alt.Chart(chart_data).mark_bar(cornerRadiusEnd=4).encode(
-            x=alt.X("diff_pct:Q", title="Differential to SQT Cut (%) — (Negative / Maroon = Under State Cut)"),
-            y=alt.Y("label:N", sort=None, title=None),
-            color=alt.Color("bar_color:N", scale=None),
-            tooltip=[
-                alt.Tooltip("event_name:N", title="Event"),
-                alt.Tooltip("best_display:N", title="Season Best"),
-                alt.Tooltip("cut_display:N", title="SQT Standard"),
-                alt.Tooltip("diff_sec:Q", title="Time Delta (Sec)", format="+.2f"),
-                alt.Tooltip("diff_pct:Q", title="Delta (%)", format="+.1f%"),
-                alt.Tooltip("status:N", title="Status"),
-                alt.Tooltip("best_meet:N", title="Achieved At")
-            ]
-        ).properties(height=max(180, len(chart_data) * 36), title=f"{swimmer_name} — Proximity to AHSAA State Cuts")
-
-        cut_rule = alt.Chart(pd.DataFrame({'x': [0]})).mark_rule(color="#F59E0B", strokeWidth=2, strokeDash=[4, 4]).encode(x='x:Q')
-        st.altair_chart(chart + cut_rule, use_container_width=True)
-
         if view_toggle == "Visual Cards":
             # Render Proximity Cards
             for idx, r in display_df.iterrows():
