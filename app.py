@@ -40,6 +40,7 @@ BLUE = "#3B82F6"
 
 # Ensure database is initialized and data loaded on startup
 db.init_db()
+db.deduplicate_swimmers()
 if not os.path.exists(db.DB_PATH) or os.path.getsize(db.DB_PATH) < 10000:
     db.import_all_meets_in_times()
 

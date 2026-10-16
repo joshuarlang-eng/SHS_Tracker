@@ -293,6 +293,140 @@ def init_db(db_path: str = DB_PATH) -> None:
 
 
 # ==============================================================================
+# Swimmer Name Normalization & Deduplication
+# ==============================================================================
+
+SWIMMER_NAME_ALIASES = {
+    "Coraline Lang": "Cora Lang",
+    "Coraline A Lang": "Cora Lang",
+}
+
+
+def normalize_swimmer_name(raw_name: str) -> Tuple[str, str, str]:
+    """
+    Normalizes a Hy-Tek CL2 swimmer name (e.g. 'Lang, Aubrey L', 'Battles, Caleb T',
+    'Pfeiffer, Brooklynn L', 'Ford, Joseph D', 'Lang, Coraline A') into
+    canonical (first_name, last_name, full_name) without middle initials.
+    """
+    raw = raw_name.strip()
+    if not raw:
+        return "", "", ""
+
+    if "," in raw:
+        parts = raw.split(",", 1)
+        last_name = parts[0].strip()
+        first_part = parts[1].strip()
+        # Strip trailing single-letter middle initial (e.g. 'Aubrey L' -> 'Aubrey')
+        first_part = re.sub(r"\s+[A-Za-z]\.?$", "", first_part).strip()
+        first_name = first_part
+    else:
+        # Format like 'Aubrey L Lang' or 'Aubrey Lang'
+        tokens = raw.split()
+        if len(tokens) >= 3 and len(tokens[-2].rstrip(".")) == 1:
+            first_name = " ".join(tokens[:-2])
+            last_name = tokens[-1]
+        elif len(tokens) >= 2:
+            first_name = tokens[0]
+            last_name = " ".join(tokens[1:])
+        else:
+            first_name = raw
+            last_name = ""
+
+    full_name = f"{first_name} {last_name}".strip()
+    if full_name in SWIMMER_NAME_ALIASES:
+        full_name = SWIMMER_NAME_ALIASES[full_name]
+        p = full_name.split(" ", 1)
+        first_name = p[0]
+        last_name = p[1] if len(p) > 1 else ""
+
+    return first_name, last_name, full_name
+
+
+def deduplicate_swimmers(db_path: str = DB_PATH) -> int:
+    """
+    Finds any swimmers in the database whose names include middle initials or aliases
+    (e.g., 'Aubrey L Lang' -> 'Aubrey Lang', 'Caleb T Battles' -> 'Caleb Battles',
+    'Brooklynn L Pfeiffer' -> 'Brooklynn Pfeiffer', 'Joseph D Ford' -> 'Joseph Ford'),
+    merges their swim_times, swim_splits, and relays into the canonical swimmer record,
+    and removes the duplicate swimmer rows.
+    """
+    init_db(db_path)
+    conn = get_connection(db_path)
+    cur = conn.cursor()
+
+    cur.execute("SELECT id, first_name, last_name, full_name, gender, grade FROM swimmers;")
+    rows = cur.fetchall()
+
+    merged_count = 0
+    for s_id, first_name, last_name, full_name, gender, grade in rows:
+        norm_first, norm_last, norm_full = normalize_swimmer_name(full_name)
+        if not norm_full or norm_full == full_name:
+            continue
+
+        # Check if canonical swimmer already exists
+        cur.execute("SELECT id, grade FROM swimmers WHERE full_name = ? AND id != ?;", (norm_full, s_id))
+        canon_row = cur.fetchone()
+
+        if canon_row:
+            canon_id, canon_grade = canon_row
+            if grade and not canon_grade:
+                cur.execute("UPDATE swimmers SET grade = ? WHERE id = ?;", (grade, canon_id))
+
+            # Merge swim_times
+            cur.execute("""
+                SELECT id, meet_id, event_name, gender, time_seconds, time_display, course, round, is_dq
+                FROM swim_times WHERE swimmer_id = ?;
+            """, (s_id,))
+            for st_row in cur.fetchall():
+                st_id, m_id, ev, gen, t_sec, t_disp, course, rnd, is_dq = st_row
+                cur.execute("""
+                    INSERT INTO swim_times (id, swimmer_id, meet_id, event_name, gender, time_seconds, time_display, course, round, is_dq)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ON CONFLICT(swimmer_id, meet_id, event_name, round) DO UPDATE SET
+                        time_seconds = excluded.time_seconds,
+                        time_display = excluded.time_display,
+                        is_dq = excluded.is_dq;
+                """, (str(uuid.uuid4()), canon_id, m_id, ev, gen, t_sec, t_disp, course, rnd, is_dq))
+            cur.execute("DELETE FROM swim_times WHERE swimmer_id = ?;", (s_id,))
+
+            # Merge swim_splits
+            cur.execute("""
+                SELECT id, meet_id, event_name, split_distance, stroke, split_seconds, split_display, is_relay, relay_leg, is_excluded
+                FROM swim_splits WHERE swimmer_id = ?;
+            """, (s_id,))
+            for sp_row in cur.fetchall():
+                sp_id, m_id, ev, s_dist, st_name, sp_sec, sp_disp, is_rel, r_leg, is_excl = sp_row
+                cur.execute("""
+                    INSERT INTO swim_splits (id, swimmer_id, meet_id, event_name, split_distance, stroke, split_seconds, split_display, is_relay, relay_leg, is_excluded)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ON CONFLICT(swimmer_id, meet_id, event_name, split_distance, stroke, is_relay, relay_leg) DO UPDATE SET
+                        split_seconds = excluded.split_seconds,
+                        split_display = excluded.split_display;
+                """, (str(uuid.uuid4()), canon_id, m_id, ev, s_dist, st_name, sp_sec, sp_disp, is_rel, r_leg, is_excl))
+            cur.execute("DELETE FROM swim_splits WHERE swimmer_id = ?;", (s_id,))
+
+            # Update relays referencing duplicate swimmer_id
+            for leg_col in ("swimmer1_id", "swimmer2_id", "swimmer3_id", "swimmer4_id"):
+                cur.execute(f"UPDATE relays SET {leg_col} = ? WHERE {leg_col} = ?;", (canon_id, s_id))
+
+            # Delete duplicate swimmer
+            cur.execute("DELETE FROM swimmers WHERE id = ?;", (s_id,))
+            merged_count += 1
+        else:
+            # Rename in-place to canonical name
+            cur.execute("""
+                UPDATE swimmers
+                SET first_name = ?, last_name = ?, full_name = ?
+                WHERE id = ?;
+            """, (norm_first, norm_last, norm_full, s_id))
+            merged_count += 1
+
+    conn.commit()
+    conn.close()
+    return merged_count
+
+
+# ==============================================================================
 # CL2 / Meet Results Parser
 # ==============================================================================
 
@@ -341,11 +475,10 @@ def parse_cl2_content(lines: List[str], team_code: str = "SHS") -> Dict[str, Any
             current_indiv = None
             if is_mcsc and not is_sardis:
                 filter_names = {
-                    "Lang, Aubrey L": "Aubrey Lang",
-                    "Lang, Coraline A": "Cora Lang",
-                    "Lang, Cora": "Cora Lang",
-                    "Battles, Caleb T": "Caleb Battles",
-                    "Duncan, Jace C": "Jace Duncan",
+                    "Aubrey Lang",
+                    "Cora Lang",
+                    "Caleb Battles",
+                    "Jace Duncan",
                 }
             else:
                 filter_names = None
@@ -363,25 +496,10 @@ def parse_cl2_content(lines: List[str], team_code: str = "SHS") -> Dict[str, Any
                     current_indiv = None
                     continue
 
-                if filter_names is not None:
-                    if raw_name not in filter_names:
-                        current_indiv = None
-                        continue
-                    full_name = filter_names[raw_name]
-                    p = full_name.split(" ", 1)
-                    first_name = p[0]
-                    last_name = p[1] if len(p) > 1 else ""
-                else:
-                    if ", " in raw_name:
-                        p = raw_name.split(", ", 1)
-                        full_name = f"{p[1].strip()} {p[0].strip()}"
-                        first_name = p[1].strip()
-                        last_name = p[0].strip()
-                    else:
-                        full_name = raw_name
-                        p = raw_name.split(" ", 1)
-                        first_name = p[0].strip()
-                        last_name = p[1].strip() if len(p) > 1 else ""
+                first_name, last_name, full_name = normalize_swimmer_name(raw_name)
+                if filter_names is not None and full_name not in filter_names:
+                    current_indiv = None
+                    continue
 
                 grade = line[6:10].strip()
                 gender = line[65].strip().upper()
@@ -505,19 +623,15 @@ def parse_cl2_content(lines: List[str], team_code: str = "SHS") -> Dict[str, Any
                 current_indiv = None
                 # Relay leg swimmer: In Hy-Tek CL2, columns 22:50 contain "Last, First M"
                 leg_name_raw = line[22:50].strip()
-                if ", " in leg_name_raw:
-                    p = leg_name_raw.split(", ", 1)
-                    sw_name = f"{p[1].strip()} {p[0].strip()}"
-                else:
-                    sw_name = leg_name_raw
+                leg_first, leg_last, sw_name = normalize_swimmer_name(leg_name_raw)
                 if sw_name and len(current_relay["swimmers"]) < 4:
                     current_relay["swimmers"].append(sw_name)
                     # Register swimmer if not already registered
                     if sw_name not in swimmers_dict:
                         leg_gender = line[64].strip().upper() if len(line) > 64 else current_relay["gender"]
                         swimmers_dict[sw_name] = {
-                            "first_name": p[1].strip() if ", " in leg_name_raw else sw_name,
-                            "last_name": p[0].strip() if ", " in leg_name_raw else "",
+                            "first_name": leg_first,
+                            "last_name": leg_last,
                             "full_name": sw_name,
                             "gender": leg_gender if leg_gender in ("M", "F") else current_relay["gender"],
                             "grade": line[6:10].strip()
@@ -622,6 +736,7 @@ def parse_cl2_content(lines: List[str], team_code: str = "SHS") -> Dict[str, Any
 def import_cl2_file(file_path: str, db_path: str = DB_PATH) -> Dict[str, Any]:
     """Imports a single .cl2 file into the database."""
     init_db(db_path)
+    deduplicate_swimmers(db_path)
     with open(file_path, "r", encoding="latin-1", errors="ignore") as f:
         lines = f.readlines()
 
@@ -646,6 +761,13 @@ def import_cl2_file(file_path: str, db_path: str = DB_PATH) -> Dict[str, Any]:
     for name, s_info in data["swimmers"].items():
         cur.execute("SELECT id, grade FROM swimmers WHERE full_name = ?;", (name,))
         row = cur.fetchone()
+        if not row:
+            # Fallback match by first_name and last_name (case-insensitive)
+            cur.execute(
+                "SELECT id, grade FROM swimmers WHERE LOWER(first_name) = LOWER(?) AND LOWER(last_name) = LOWER(?);",
+                (s_info["first_name"], s_info["last_name"])
+            )
+            row = cur.fetchone()
         if row:
             s_id = row[0]
             if s_info["grade"] and not row[1]:
@@ -764,6 +886,7 @@ def import_all_meets_in_times(times_dir: str = TIMES_DIR, db_path: str = DB_PATH
     Unzips any zip files in times_dir, locates all .cl2 files, and imports them.
     """
     init_db(db_path)
+    deduplicate_swimmers(db_path)
     if not os.path.exists(times_dir):
         return []
 
