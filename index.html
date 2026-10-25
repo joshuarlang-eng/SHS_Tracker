@@ -12,19 +12,18 @@
 
   <style>
     :root {
-      /* Sardis Lions Official Branding */
+      /* Sardis Official Palette */
       --shs-crimson: #8B0526;
-      --shs-crimson-light: #B20731;
-      --shs-crimson-dark: #5C0319;
-      --shs-crimson-bg: rgba(139, 5, 38, 0.08);
+      --shs-crimson-dark: #66031b;
+      --shs-crimson-light: #b30732;
+      --shs-crimson-subtle: rgba(139, 5, 38, 0.08);
       --shs-crimson-glow: rgba(139, 5, 38, 0.25);
 
-      --record-gold: #d97706;
-      --record-gold-bg: rgba(217, 119, 6, 0.12);
-      --new-green: #10b981;
-      --new-green-bg: rgba(16, 185, 129, 0.12);
+      --badge-new-bg: #16a34a;
+      --badge-new-text: #ffffff;
+      --new-green-glow: rgba(22, 163, 74, 0.25);
 
-      /* Light Theme (Default) */
+      /* Light Theme (Default for website embed) */
       --bg-page: #f8fafc;
       --bg-card: #ffffff;
       --bg-subtle: #f1f5f9;
@@ -49,11 +48,11 @@
     }
 
     [data-theme="dark"] {
-      --bg-page: #0a0e17;
-      --bg-card: #121826;
-      --bg-subtle: #1b2337;
+      --bg-page: #090e17;
+      --bg-card: #131c2e;
+      --bg-subtle: #1a263d;
       --border: #23334d;
-      --border-focus: #B20731;
+      --border-focus: #b30732;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --text-light: #64748b;
@@ -61,10 +60,11 @@
       --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
       --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
 
-      --shs-crimson-bg: rgba(178, 7, 49, 0.2);
-      --shs-crimson-glow: rgba(178, 7, 49, 0.4);
-      --pill-active-bg: #B20731;
+      --pill-active-bg: #b30732;
       --pill-active-text: #ffffff;
+      --badge-new-bg: #22c55e;
+      --badge-new-text: #052e16;
+      --shs-crimson-subtle: rgba(179, 7, 50, 0.18);
     }
 
     * {
@@ -112,24 +112,24 @@
     }
 
     .brand-logo {
-      width: 58px;
-      height: 58px;
+      height: 56px;
+      width: auto;
       object-fit: contain;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.12));
     }
 
     .brand-title .subtitle {
       font-size: 0.85rem;
       font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
       color: var(--shs-crimson-light);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
       display: block;
       margin-bottom: 2px;
     }
 
     .brand-title h1 {
-      font-size: 1.65rem;
+      font-size: 1.35rem;
       font-weight: 800;
       letter-spacing: -0.02em;
       color: var(--text-main);
@@ -143,18 +143,18 @@
     }
 
     .theme-toggle-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
       background: var(--bg-subtle);
       border: 1px solid var(--border);
       color: var(--text-main);
-      padding: 8px 14px;
-      border-radius: 9999px;
-      cursor: pointer;
+      border-radius: 8px;
+      padding: 8px 12px;
       font-size: 0.85rem;
       font-weight: 600;
-      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
     }
 
     .theme-toggle-btn:hover {
@@ -176,8 +176,8 @@
     .meta-chip {
       background: var(--bg-subtle);
       border: 1px solid var(--border);
-      padding: 6px 14px;
-      border-radius: 9999px;
+      padding: 5px 12px;
+      border-radius: 20px;
       color: var(--text-muted);
       display: inline-flex;
       align-items: center;
@@ -190,50 +190,71 @@
     }
 
     .meta-chip.highlight {
-      background: var(--new-green-bg);
-      border-color: var(--new-green);
-      color: #065f46;
+      background: rgba(22, 163, 74, 0.12);
+      border-color: rgba(22, 163, 74, 0.4);
+      color: #15803d;
       font-weight: 700;
     }
 
     [data-theme="dark"] .meta-chip.highlight {
-      color: #34d399;
+      color: #4ade80;
     }
 
     .meta-chip .dot {
       width: 8px;
       height: 8px;
-      background-color: var(--new-green);
+      background-color: #16a34a;
       border-radius: 50%;
       display: inline-block;
       animation: pulse 2s infinite;
     }
 
     @keyframes pulse {
-      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-      70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
-      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.2); }
     }
 
-    /* Sticky Controls Toolbar */
+    /* Filter Controls Toolbar */
     .controls-panel {
       position: sticky;
       top: 0;
-      z-index: 100;
-      background: var(--bg-card);
+      z-index: 50;
+      background: var(--bg-page);
+      padding: 16px 0 12px;
       border-bottom: 1px solid var(--border);
-      padding: 14px 0;
-      box-shadow: var(--shadow-sm);
       backdrop-filter: blur(8px);
+      background-color: rgba(var(--bg-page), 0.95);
+      margin-bottom: 24px;
     }
 
     .search-row {
+      display: flex;
+      gap: 12px;
       margin-bottom: 12px;
     }
 
     .search-box {
+      flex: 1;
       position: relative;
+    }
+
+    .search-box input {
       width: 100%;
+      height: 44px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0 16px 0 42px;
+      font-size: 0.95rem;
+      color: var(--text-main);
+      transition: all 0.15s ease;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--shs-crimson-glow);
     }
 
     .search-icon {
@@ -241,26 +262,8 @@
       left: 14px;
       top: 50%;
       transform: translateY(-50%);
-      color: var(--text-muted);
+      color: var(--text-light);
       pointer-events: none;
-    }
-
-    .search-box input {
-      width: 100%;
-      padding: 10px 40px 10px 42px;
-      background: var(--bg-subtle);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      font-size: 0.95rem;
-      color: var(--text-main);
-      outline: none;
-      transition: all 0.2s ease;
-    }
-
-    .search-box input:focus {
-      background: var(--bg-card);
-      border-color: var(--border-focus);
-      box-shadow: 0 0 0 3px var(--shs-crimson-glow);
     }
 
     .clear-search-btn {
@@ -268,9 +271,9 @@
       right: 12px;
       top: 50%;
       transform: translateY(-50%);
-      background: transparent;
+      background: none;
       border: none;
-      color: var(--text-muted);
+      color: var(--text-light);
       cursor: pointer;
       font-size: 1rem;
       padding: 4px;
@@ -281,265 +284,263 @@
       color: var(--text-main);
     }
 
-    .filters-wrapper {
+    /* Filters: Gender & Stroke tabs */
+    .filter-group {
       display: flex;
-      flex-wrap: wrap;
       align-items: center;
       gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .filter-group::-webkit-scrollbar {
+      display: none;
     }
 
     .filter-label {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: var(--text-muted);
-      margin-right: 2px;
+      color: var(--text-light);
+      padding-right: 4px;
+      white-space: nowrap;
     }
 
     .filter-pill {
-      background: var(--bg-subtle);
+      background: var(--bg-card);
       border: 1px solid var(--border);
-      color: var(--text-main);
+      border-radius: 20px;
       padding: 6px 14px;
-      border-radius: 9999px;
-      cursor: pointer;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      white-space: nowrap;
       transition: all 0.15s ease;
     }
 
     .filter-pill:hover {
-      background: var(--border);
+      border-color: var(--shs-crimson-light);
+      color: var(--shs-crimson-dark);
     }
 
     .filter-pill.active {
       background: var(--pill-active-bg);
-      color: var(--pill-active-text);
       border-color: var(--pill-active-bg);
-      box-shadow: 0 2px 4px var(--shs-crimson-glow);
+      color: var(--pill-active-text);
+      box-shadow: 0 2px 6px var(--shs-crimson-glow);
     }
 
     .filter-pill.new-pill.active {
-      background: var(--new-green);
-      border-color: var(--new-green);
-      color: #ffffff;
+      background: var(--badge-new-bg);
+      border-color: var(--badge-new-bg);
+      color: var(--badge-new-text);
+      box-shadow: 0 2px 6px var(--new-green-glow);
     }
 
     .filter-divider {
-      width: 1px;
       height: 20px;
+      width: 1px;
       background: var(--border);
-      margin: 0 6px;
+      margin: 0 4px;
     }
 
-    /* Main Grid */
-    main {
-      padding-top: 24px;
+    /* Records Group Section (MCSC style) */
+    .records-group {
+      background: var(--bg-card);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: all 0.15s ease;
     }
 
-    .gender-section {
-      margin-bottom: 36px;
-    }
-
-    .gender-header {
+    .group-header {
+      background: var(--bg-subtle);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
       display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: 12px;
-      margin-bottom: 16px;
-      padding-bottom: 8px;
-      border-bottom: 2px solid var(--shs-crimson);
     }
 
-    .gender-header h2 {
-      font-size: 1.35rem;
+    .group-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .gender-tag {
+      font-size: 0.72rem;
       font-weight: 800;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 6px;
+      letter-spacing: 0.05em;
+    }
+
+    .gender-tag.girls {
+      background: rgba(236, 72, 153, 0.12);
+      color: #db2777;
+    }
+
+    .gender-tag.boys {
+      background: rgba(14, 165, 233, 0.12);
+      color: #0284c7;
+    }
+
+    .group-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .group-count {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Responsive Records Table (MCSC style) */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table.records-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.92rem;
+    }
+
+    table.records-table th {
+      background: var(--bg-card);
+      color: var(--text-light);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 11px 18px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    table.records-table td {
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    table.records-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    table.records-table tr:hover td {
+      background-color: var(--bg-subtle);
+    }
+
+    /* Cell styles */
+    .event-cell {
+      font-weight: 600;
       color: var(--text-main);
       display: flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+    }
+
+    .stroke-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    .stroke-free { background-color: var(--stroke-free); }
+    .stroke-back { background-color: var(--stroke-back); }
+    .stroke-breast { background-color: var(--stroke-breast); }
+    .stroke-fly { background-color: var(--stroke-fly); }
+    .stroke-im { background-color: var(--stroke-im); }
+    .stroke-relay { background-color: var(--stroke-relay); }
+
+    .time-cell {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--shs-crimson-dark);
+      white-space: nowrap;
+      display: inline-flex;
       align-items: center;
       gap: 8px;
     }
 
-    .gender-header .badge {
-      font-size: 0.8rem;
-      font-weight: 700;
-      background: var(--shs-crimson-bg);
-      color: var(--shs-crimson-light);
-      padding: 3px 10px;
-      border-radius: 9999px;
-    }
-
-    .records-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-      gap: 16px;
-    }
-
-    /* Record Card */
-    .record-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 18px;
-      box-shadow: var(--shadow-sm);
-      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .record-card:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
-      border-color: var(--shs-crimson-light);
-    }
-
-    .record-card.is-new {
-      border-color: var(--new-green);
-      background: linear-gradient(to bottom, var(--new-green-bg), var(--bg-card) 60px);
-    }
-
-    .card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 12px;
-    }
-
-    .event-info .event-name {
-      font-size: 1.15rem;
-      font-weight: 800;
-      color: var(--text-main);
-      line-height: 1.3;
-    }
-
-    .event-info .stroke-tag {
-      display: inline-block;
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      padding: 2px 8px;
-      border-radius: 4px;
-      margin-top: 4px;
-    }
-
-    .stroke-tag.Free { background: rgba(2, 132, 199, 0.12); color: var(--stroke-free); }
-    .stroke-tag.Back { background: rgba(13, 148, 136, 0.12); color: var(--stroke-back); }
-    .stroke-tag.Breast { background: rgba(217, 119, 6, 0.12); color: var(--stroke-breast); }
-    .stroke-tag.Fly { background: rgba(147, 51, 234, 0.12); color: var(--stroke-fly); }
-    .stroke-tag.IM { background: rgba(225, 29, 72, 0.12); color: var(--stroke-im); }
-    .stroke-tag.Relay { background: var(--shs-crimson-bg); color: var(--shs-crimson-light); }
-
-    .time-badge {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 1.45rem;
-      font-weight: 700;
-      color: var(--shs-crimson-light);
-      background: var(--bg-subtle);
-      padding: 4px 12px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      text-align: right;
-      letter-spacing: -0.02em;
-    }
-
-    [data-theme="dark"] .time-badge {
+    [data-theme="dark"] .time-cell {
       color: #f43f5e;
     }
 
-    .record-card.is-new .time-badge {
-      color: var(--new-green);
-      border-color: var(--new-green);
+    .time-cell.is-new {
+      color: #16a34a;
     }
 
-    .new-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 0.75rem;
+    [data-theme="dark"] .time-cell.is-new {
+      color: #4ade80;
+    }
+
+    .badge-new {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.68rem;
       font-weight: 800;
-      background: var(--new-green);
-      color: #ffffff;
-      padding: 2px 8px;
-      border-radius: 9999px;
-      margin-bottom: 8px;
-      width: fit-content;
-      animation: pulse 2s infinite;
-    }
-
-    .card-body {
-      margin-bottom: 14px;
-    }
-
-    .swimmer-name {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .relay-legs-list {
-      margin-top: 8px;
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      background: var(--bg-subtle);
-      padding: 8px 12px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-    }
-
-    .relay-leg-item {
-      font-size: 0.85rem;
-      display: flex;
-      justify-content: space-between;
-      color: var(--text-main);
-    }
-
-    .relay-leg-item .role {
-      font-weight: 600;
-      color: var(--text-muted);
-      font-size: 0.75rem;
-      text-transform: uppercase;
       letter-spacing: 0.04em;
+      background: var(--badge-new-bg);
+      color: var(--badge-new-text);
+      padding: 2px 6px;
+      border-radius: 4px;
+      box-shadow: 0 0 8px var(--new-green-glow);
     }
 
-    .prev-record-alert {
-      margin-top: 8px;
-      font-size: 0.78rem;
+    .prev-drop {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 500;
       color: var(--text-muted);
-      font-style: italic;
+      font-family: 'Inter', sans-serif;
+      margin-top: 2px;
     }
 
-    .card-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      border-top: 1px solid var(--border);
-      padding-top: 10px;
-      margin-top: auto;
-    }
-
-    .card-footer .meet-name {
+    .swimmer-cell {
       font-weight: 600;
       color: var(--text-main);
+    }
+
+    .relay-roster {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    .date-cell {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+
+    .meet-subtext {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-light);
+      margin-top: 2px;
+      max-width: 240px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      max-width: 220px;
-    }
-
-    .card-footer .meet-date {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
     }
 
     /* Empty state */
@@ -557,7 +558,7 @@
 
     /* Footer */
     footer {
-      margin-top: 60px;
+      margin-top: 40px;
       text-align: center;
       color: var(--text-muted);
       font-size: 0.85rem;
@@ -581,10 +582,10 @@
         align-items: flex-start;
       }
       .brand-title h1 {
-        font-size: 1.35rem;
+        font-size: 1.2rem;
       }
-      .records-grid {
-        grid-template-columns: 1fr;
+      table.records-table th, table.records-table td {
+        padding: 10px 14px;
       }
     }
   </style>
@@ -628,7 +629,7 @@
     </div>
   </header>
 
-  <!-- Sticky Controls Toolbar -->
+  <!-- Sticky Controls Toolbar (MCSC style) -->
   <div class="controls-panel">
     <div class="container">
       <!-- Search Input -->
@@ -638,13 +639,13 @@
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
-          <input type="text" id="searchInput" placeholder="Search by swimmer (e.g. Aubrey Lang), event (e.g. 50 Free), stroke, or meet..." autocomplete="off">
+          <input type="text" id="searchInput" placeholder="Search by swimmer (e.g. Aubrey Lang), event (e.g. 50 Free), stroke..." autocomplete="off">
           <button class="clear-search-btn" id="clearSearchBtn" aria-label="Clear search">✕</button>
         </div>
       </div>
 
-      <!-- Filter Pills -->
-      <div class="filters-wrapper">
+      <!-- Filter Tabs (MCSC style) -->
+      <div class="filter-group">
         <span class="filter-label">Gender:</span>
         <button class="filter-pill active" data-gender="all">Both</button>
         <button class="filter-pill" data-gender="F">Girls</button>
@@ -664,13 +665,13 @@
         <div class="filter-divider"></div>
 
         <button class="filter-pill new-pill" id="newFilterBtn" data-new="false">
-          ✨ New Records
+          ✨ New Records Only
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Main Records Container -->
+  <!-- Main Records Container (Tables like MCSC) -->
   <main class="container">
     <div id="recordsContainer">
       <div class="empty-state">
@@ -681,33 +682,37 @@
 
   <!-- Footer -->
   <footer class="container">
-    <p>Official Record Board &bull; Sardis High School Lions Swim &amp; Dive &bull; AHSAA 1A–5A</p>
-    <p style="margin-top: 6px; font-size: 0.78rem;">Powered by Sardis Swim Performance Engine &bull; Auto-synchronized via GitHub Actions</p>
+    <p>Official Short Course Yards Records &bull; Sardis High School Lions Swim &amp; Dive &bull; AHSAA 1A–5A</p>
+    <p style="margin-top: 6px; font-size: 0.78rem;">Auto-synchronized via GitHub Actions</p>
   </footer>
 
   <!-- Embedded fallback records JSON for offline / file:/// protocol browsing -->
-  <script id="embeddedRecords" type="application/json">{"team":"SHS","team_name":"Sardis High School","mascot":"Lions","last_updated":"2026-10-24T21:52:16.539686","latest_meet":{"name":"2026 NAHSSL Championships","date":"2026-10-24"},"total_records":25,"new_records_count":6,"records":[{"id":"F_200_medley_relay","gender":"F","gender_name":"Girls","event_name":"200 Medley Relay","stroke":"Relay","is_relay":true,"team_letter":"A","time_seconds":138.55,"time_formatted":"2:18.55","swimmer_name":"Cora Lang, Aubrey Lang, Brooklynn Pfeiffer, Marissa Wortham","swimmers":["Cora Lang","Aubrey Lang","Brooklynn Pfeiffer","Marissa Wortham"],"relay_legs":[{"leg":1,"role":"Back","swimmer":"Cora Lang"},{"leg":2,"role":"Breast","swimmer":"Aubrey Lang"},{"leg":3,"role":"Fly","swimmer":"Brooklynn Pfeiffer"},{"leg":4,"role":"Free","swimmer":"Marissa Wortham"}],"meet_name":"2026 NAHSSL Championships","meet_date":"2026-10-24","is_new":true,"prev_record":"Prev: 2:20.98 [-2.43s]","sort_order":1},{"id":"F_200_free","gender":"F","gender_name":"Girls","event_name":"200 Free","stroke":"Free","is_relay":false,"time_seconds":133.61,"time_formatted":"2:13.61","swimmer_name":"Aubrey Lang","swimmers":["Aubrey Lang"],"relay_legs":null,"meet_name":"2026 NAHSSL Championships","meet_date":"2026-10-24","is_new":true,"prev_record":"Prev: 2:29.52 (Aubrey Lang) [-15.91s]","sort_order":2},{"id":"F_200_im","gender":"F","gender_name":"Girls","event_name":"200 IM","stroke":"IM","is_relay":false,"time_seconds":149.92,"time_formatted":"2:29.92","swimmer_name":"Aubrey Lang","swimmers":["Aubrey Lang"],"relay_legs":null,"meet_name":"2024 Season Meet (11/14)","meet_date":"2024-11-14","is_new":false,"prev_record":null,"sort_order":3},{"id":"F_50_free","gender":"F","gender_name":"Girls","event_name":"50 Free","stroke":"Free","is_relay":false,"time_seconds":28.13,"time_formatted":"28.13","swimmer_name":"Aubrey Lang","swimmers":["Aubrey Lang"],"relay_legs":null,"meet_name":"2026 NAHSSL Championships","meet_date":"2026-10-24","is_new":true,"prev_record":"Prev: 30.92 (Cora Lang) [-2.79s]","sort_order":4},{"id":"F_100_fly","gender":"F","gender_name":"Girls","event_name":"100 Fly","stroke":"Fly","is_relay":false,"time_seconds":67.69,"time_formatted":"1:07.69","swimmer_name":"Aubrey Lang","swimmers":["Aubrey Lang"],"relay_legs":null,"meet_name":"2025 Season Meet (11/10)","meet_date":"2025-11-10","is_new":false,"prev_record":null,"sort_order":6},{"id":"F_100_free","gender":"F","gender_name":"Girls","event_name":"100 Free","stroke":"Free","is_relay":false,"time_seconds":67.97,"time_formatted":"1:07.97","swimmer_name":"Aubrey Lang","swimmers":["Aubrey Lang"],"relay_legs":null,"meet_name":"2023 Season Meet (10/12)","meet_date":"2023-10-12","is_new":false,"prev_record":null,"sort_order":7},{"id":"F_500_free","gender":"F","gender_name":"Girls","event_name":"500 Free","stroke":"Free","is_relay":false,"time_seconds":386.95,"time_formatted":"6:26.95","swimmer_name":"Aubrey Lang","swimmers":["Aubrey Lang"],"relay_legs":null,"meet_name":"2024 Season Meet (10/19)","meet_date":"2024-10-19","is_new":false,"prev_record":null,"sort_order":8},{"id":"F_200_free_relay","gender":"F","gender_name":"Girls","event_name":"200 Free Relay","stroke":"Relay","is_relay":true,"team_letter":"A","time_seconds":123.47,"time_formatted":"2:03.47","swimmer_name":"Cora Lang, Marissa Wortham, Brooklynn Pfeiffer, Aubrey Lang","swimmers":["Cora Lang","Marissa Wortham","Brooklynn Pfeiffer","Aubrey Lang"],"relay_legs":[{"leg":1,"role":"Leg 1","swimmer":"Cora Lang"},{"leg":2,"role":"Leg 2","swimmer":"Marissa Wortham"},{"leg":3,"role":"Leg 3","swimmer":"Brooklynn Pfeiffer"},{"leg":4,"role":"Leg 4","swimmer":"Aubrey Lang"}],"meet_name":"2026 NAHSSL Championships","meet_date":"2026-10-24","is_new":true,"prev_record":"Prev: 2:07.18 [-3.71s]","sort_order":9},{"id":"F_100_back","gender":"F","gender_name":"Girls","event_name":"100 Back","stroke":"Back","is_relay":false,"time_seconds":68.94,"time_formatted":"1:08.94","swimmer_name":"Aubrey Lang","swimmers":["Aubrey Lang"],"relay_legs":null,"meet_name":"2024 Season Meet (11/14)","meet_date":"2024-11-14","is_new":false,"prev_record":null,"sort_order":10},{"id":"F_100_breast","gender":"F","gender_name":"Girls","event_name":"100 Breast","stroke":"Breast","is_relay":false,"time_seconds":82.24,"time_formatted":"1:22.24","swimmer_name":"Aubrey Lang","swimmers":["Aubrey Lang"],"relay_legs":null,"meet_name":"2026 Pirate Invitational","meet_date":"2026-10-15","is_new":false,"prev_record":null,"sort_order":11},{"id":"F_400_free_relay","gender":"F","gender_name":"Girls","event_name":"400 Free Relay","stroke":"Relay","is_relay":true,"team_letter":"A","time_seconds":289.11,"time_formatted":"4:49.11","swimmer_name":"Brooklynn Pfeiffer, Marissa Wortham, Cora Lang, Aubrey Lang","swimmers":["Brooklynn Pfeiffer","Marissa Wortham","Cora Lang","Aubrey Lang"],"relay_legs":[{"leg":1,"role":"Leg 1","swimmer":"Brooklynn Pfeiffer"},{"leg":2,"role":"Leg 2","swimmer":"Marissa Wortham"},{"leg":3,"role":"Leg 3","swimmer":"Cora Lang"},{"leg":4,"role":"Leg 4","swimmer":"Aubrey Lang"}],"meet_name":"2026 Albertville Invitational","meet_date":"2026-09-28","is_new":false,"prev_record":null,"sort_order":12},{"id":"F_50_fly","gender":"F","gender_name":"Girls","event_name":"50 Fly","stroke":"Fly","is_relay":false,"time_seconds":31.31,"time_formatted":"31.31","swimmer_name":"Aubrey Lang","swimmers":["Aubrey Lang"],"relay_legs":null,"meet_name":"2023 Season Meet (09/04)","meet_date":"2023-09-04","is_new":false,"prev_record":null,"sort_order":14},{"id":"F_50_back","gender":"F","gender_name":"Girls","event_name":"50 Back","stroke":"Back","is_relay":false,"time_seconds":34.27,"time_formatted":"34.27","swimmer_name":"Cora Lang","swimmers":["Cora Lang"],"relay_legs":null,"meet_name":"2025 Season Meet (09/11)","meet_date":"2025-09-11","is_new":false,"prev_record":null,"sort_order":15},{"id":"F_50_breast","gender":"F","gender_name":"Girls","event_name":"50 Breast","stroke":"Breast","is_relay":false,"time_seconds":41.44,"time_formatted":"41.44","swimmer_name":"Aubrey Lang","swimmers":["Aubrey Lang"],"relay_legs":null,"meet_name":"2025 Season Meet (09/11)","meet_date":"2025-09-11","is_new":false,"prev_record":null,"sort_order":16},{"id":"M_200_medley_relay","gender":"M","gender_name":"Boys","event_name":"200 Medley Relay","stroke":"Relay","is_relay":true,"team_letter":"A","time_seconds":117.0,"time_formatted":"1:57.00","swimmer_name":"Jace Duncan, Rowan Spears, Caleb Battles, Joseph Ford","swimmers":["Jace Duncan","Rowan Spears","Caleb Battles","Joseph Ford"],"relay_legs":[{"leg":1,"role":"Back","swimmer":"Jace Duncan"},{"leg":2,"role":"Breast","swimmer":"Rowan Spears"},{"leg":3,"role":"Fly","swimmer":"Caleb Battles"},{"leg":4,"role":"Free","swimmer":"Joseph Ford"}],"meet_name":"2026 Pirate Invitational","meet_date":"2026-10-15","is_new":false,"prev_record":null,"sort_order":1},{"id":"M_200_free","gender":"M","gender_name":"Boys","event_name":"200 Free","stroke":"Free","is_relay":false,"time_seconds":124.05,"time_formatted":"2:04.05","swimmer_name":"Caleb Battles","swimmers":["Caleb Battles"],"relay_legs":null,"meet_name":"2025 Season Meet (11/10)","meet_date":"2025-11-10","is_new":false,"prev_record":null,"sort_order":2},{"id":"M_200_im","gender":"M","gender_name":"Boys","event_name":"200 IM","stroke":"IM","is_relay":false,"time_seconds":141.12,"time_formatted":"2:21.12","swimmer_name":"Jace Duncan","swimmers":["Jace Duncan"],"relay_legs":null,"meet_name":"2026 Pirate Invitational","meet_date":"2026-10-15","is_new":false,"prev_record":null,"sort_order":3},{"id":"M_50_free","gender":"M","gender_name":"Boys","event_name":"50 Free","stroke":"Free","is_relay":false,"time_seconds":24.13,"time_formatted":"24.13","swimmer_name":"Caleb Battles","swimmers":["Caleb Battles"],"relay_legs":null,"meet_name":"2026 SMPA Aquapalooza","meet_date":"2026-09-12","is_new":false,"prev_record":null,"sort_order":4},{"id":"M_100_fly","gender":"M","gender_name":"Boys","event_name":"100 Fly","stroke":"Fly","is_relay":false,"time_seconds":60.85,"time_formatted":"1:00.85","swimmer_name":"Caleb Battles","swimmers":["Caleb Battles"],"relay_legs":null,"meet_name":"2026 Albertville Invitational","meet_date":"2026-09-28","is_new":false,"prev_record":null,"sort_order":6},{"id":"M_100_free","gender":"M","gender_name":"Boys","event_name":"100 Free","stroke":"Free","is_relay":false,"time_seconds":54.19,"time_formatted":"54.19","swimmer_name":"Caleb Battles","swimmers":["Caleb Battles"],"relay_legs":null,"meet_name":"2025 Season Meet (10/30)","meet_date":"2025-10-30","is_new":false,"prev_record":null,"sort_order":7},{"id":"M_500_free","gender":"M","gender_name":"Boys","event_name":"500 Free","stroke":"Free","is_relay":false,"time_seconds":343.67,"time_formatted":"5:43.67","swimmer_name":"Jace Duncan","swimmers":["Jace Duncan"],"relay_legs":null,"meet_name":"2026 NAHSSL Championships","meet_date":"2026-10-24","is_new":true,"prev_record":"Prev: 5:56.05 (Jace Duncan) [-12.38s]","sort_order":8},{"id":"M_200_free_relay","gender":"M","gender_name":"Boys","event_name":"200 Free Relay","stroke":"Relay","is_relay":true,"team_letter":"A","time_seconds":105.82,"time_formatted":"1:45.82","swimmer_name":"Jace Duncan, Joseph Ford, Rowan Spears, Caleb Battles","swimmers":["Jace Duncan","Joseph Ford","Rowan Spears","Caleb Battles"],"relay_legs":[{"leg":1,"role":"Leg 1","swimmer":"Jace Duncan"},{"leg":2,"role":"Leg 2","swimmer":"Joseph Ford"},{"leg":3,"role":"Leg 3","swimmer":"Rowan Spears"},{"leg":4,"role":"Leg 4","swimmer":"Caleb Battles"}],"meet_name":"2026 Pirate Invitational","meet_date":"2026-10-15","is_new":false,"prev_record":null,"sort_order":9},{"id":"M_100_back","gender":"M","gender_name":"Boys","event_name":"100 Back","stroke":"Back","is_relay":false,"time_seconds":61.79,"time_formatted":"1:01.79","swimmer_name":"Caleb Battles","swimmers":["Caleb Battles"],"relay_legs":null,"meet_name":"2025 Season Meet (11/10)","meet_date":"2025-11-10","is_new":false,"prev_record":null,"sort_order":10},{"id":"M_100_breast","gender":"M","gender_name":"Boys","event_name":"100 Breast","stroke":"Breast","is_relay":false,"time_seconds":74.36,"time_formatted":"1:14.36","swimmer_name":"Rowan Spears","swimmers":["Rowan Spears"],"relay_legs":null,"meet_name":"2026 NAHSSL Championships","meet_date":"2026-10-24","is_new":true,"prev_record":"Prev: 1:14.51 (Rowan Spears) [-0.15s]","sort_order":11},{"id":"M_50_back","gender":"M","gender_name":"Boys","event_name":"50 Back","stroke":"Back","is_relay":false,"time_seconds":37.28,"time_formatted":"37.28","swimmer_name":"Caleb Battles","swimmers":["Caleb Battles"],"relay_legs":null,"meet_name":"2023 Season Meet (09/04)","meet_date":"2023-09-04","is_new":false,"prev_record":null,"sort_order":15}]}</script>
+  <script id="embeddedRecords" type="application/json">{"team":"SHS","team_name":"Sardis High School","mascot":"Lions","last_updated":"2026-10-25T02:26:35.134817","latest_meet":{"name":"2026 NAHSSL Championships","date":"2026-10-24"},"total_records":25,"new_records_count":6,"records":[{"id":"F_200_medley_relay","gender":"F","gender_name":"Girls","event_name":"200 Medley Relay","stroke":"Relay","is_relay":true,"team_letter":"A","time_seconds":138.55,"time_formatted":"2:18.55","swimmer_name":"Cora Lang, Aubrey Lang, Brooklynn Pfeiffer, Marissa Wortham","swimmers":["Cora Lang","Aubrey Lang","Brooklynn Pfeiffer","Marissa Wortham"],"relay_legs":[{"leg":1,"role":"Back","swimmer":"Cora Lang"},{"leg":2,"role":"Breast","swimmer":"Aubrey Lang"},{"leg":3,"role":"Fly","swimmer":"Brooklynn Pfeiffer"},{"leg":4,"role":"Free","swimmer":"Marissa Wortham"}],"meet_name":"2026 NAHSSL Championships","meet_date":"2026-10-24","is_new":true,"prev_record":"Prev: 2:20.98 [-2.43s]","sort_order":1},{"id":"F_200_free","gender":"F","gender_name":"Girls","event_name":"200 Free","stroke":"Free","is_relay":false,"time_seconds":133.61,"time_formatted":"2:13.61","swimmer_name":"Aubrey Lang","swimmers":["Aubrey Lang"],"relay_legs":null,"meet_name":"2026 NAHSSL Championships","meet_date":"2026-10-24","is_new":true,"prev_record":"Prev: 2:29.52 (Aubrey Lang) [-15.91s]","sort_order":2},{"id":"F_200_im","gender":"F","gender_name":"Girls","event_name":"200 IM","stroke":"IM","is_relay":false,"time_seconds":149.92,"time_formatted":"2:29.92","swimmer_name":"Aubrey Lang","swimmers":["Aubrey Lang"],"relay_legs":null,"meet_name":"2024 Season Meet (11/14)","meet_date":"2024-11-14","is_new":false,"prev_record":null,"sort_order":3},{"id":"F_50_free","gender":"F","gender_name":"Girls","event_name":"50 Free","stroke":"Free","is_relay":false,"time_seconds":28.13,"time_formatted":"28.13","swimmer_name":"Aubrey Lang","swimmers":["Aubrey Lang"],"relay_legs":null,"meet_name":"2026 NAHSSL Championships","meet_date":"2026-10-24","is_new":true,"prev_record":"Prev: 30.92 (Cora Lang) [-2.79s]","sort_order":4},{"id":"F_100_fly","gender":"F","gender_name":"Girls","event_name":"100 Fly","stroke":"Fly","is_relay":false,"time_seconds":67.69,"time_formatted":"1:07.69","swimmer_name":"Aubrey Lang","swimmers":["Aubrey Lang"],"relay_legs":null,"meet_name":"2025 Season Meet (11/10)","meet_date":"2025-11-10","is_new":false,"prev_record":null,"sort_order":6},{"id":"F_100_free","gender":"F","gender_name":"Girls","event_name":"100 Free","stroke":"Free","is_relay":false,"time_seconds":67.97,"time_formatted":"1:07.97","swimmer_name":"Aubrey Lang","swimmers":["Aubrey Lang"],"relay_legs":null,"meet_name":"2023 Season Meet (10/12)","meet_date":"2023-10-12","is_new":false,"prev_record":null,"sort_order":7},{"id":"F_500_free","gender":"F","gender_name":"Girls","event_name":"500 Free","stroke":"Free","is_relay":false,"time_seconds":386.95,"time_formatted":"6:26.95","swimmer_name":"Aubrey Lang","swimmers":["Aubrey Lang"],"relay_legs":null,"meet_name":"2024 Season Meet (10/19)","meet_date":"2024-10-19","is_new":false,"prev_record":null,"sort_order":8},{"id":"F_200_free_relay","gender":"F","gender_name":"Girls","event_name":"200 Free Relay","stroke":"Relay","is_relay":true,"team_letter":"A","time_seconds":123.47,"time_formatted":"2:03.47","swimmer_name":"Cora Lang, Marissa Wortham, Brooklynn Pfeiffer, Aubrey Lang","swimmers":["Cora Lang","Marissa Wortham","Brooklynn Pfeiffer","Aubrey Lang"],"relay_legs":[{"leg":1,"role":"Leg 1","swimmer":"Cora Lang"},{"leg":2,"role":"Leg 2","swimmer":"Marissa Wortham"},{"leg":3,"role":"Leg 3","swimmer":"Brooklynn Pfeiffer"},{"leg":4,"role":"Leg 4","swimmer":"Aubrey Lang"}],"meet_name":"2026 NAHSSL Championships","meet_date":"2026-10-24","is_new":true,"prev_record":"Prev: 2:07.18 [-3.71s]","sort_order":9},{"id":"F_100_back","gender":"F","gender_name":"Girls","event_name":"100 Back","stroke":"Back","is_relay":false,"time_seconds":68.94,"time_formatted":"1:08.94","swimmer_name":"Aubrey Lang","swimmers":["Aubrey Lang"],"relay_legs":null,"meet_name":"2024 Season Meet (11/14)","meet_date":"2024-11-14","is_new":false,"prev_record":null,"sort_order":10},{"id":"F_100_breast","gender":"F","gender_name":"Girls","event_name":"100 Breast","stroke":"Breast","is_relay":false,"time_seconds":82.24,"time_formatted":"1:22.24","swimmer_name":"Aubrey Lang","swimmers":["Aubrey Lang"],"relay_legs":null,"meet_name":"2026 Pirate Invitational","meet_date":"2026-10-15","is_new":false,"prev_record":null,"sort_order":11},{"id":"F_400_free_relay","gender":"F","gender_name":"Girls","event_name":"400 Free Relay","stroke":"Relay","is_relay":true,"team_letter":"A","time_seconds":289.11,"time_formatted":"4:49.11","swimmer_name":"Brooklynn Pfeiffer, Marissa Wortham, Cora Lang, Aubrey Lang","swimmers":["Brooklynn Pfeiffer","Marissa Wortham","Cora Lang","Aubrey Lang"],"relay_legs":[{"leg":1,"role":"Leg 1","swimmer":"Brooklynn Pfeiffer"},{"leg":2,"role":"Leg 2","swimmer":"Marissa Wortham"},{"leg":3,"role":"Leg 3","swimmer":"Cora Lang"},{"leg":4,"role":"Leg 4","swimmer":"Aubrey Lang"}],"meet_name":"2026 Albertville Invitational","meet_date":"2026-09-28","is_new":false,"prev_record":null,"sort_order":12},{"id":"F_50_fly","gender":"F","gender_name":"Girls","event_name":"50 Fly","stroke":"Fly","is_relay":false,"time_seconds":31.31,"time_formatted":"31.31","swimmer_name":"Aubrey Lang","swimmers":["Aubrey Lang"],"relay_legs":null,"meet_name":"2023 Season Meet (09/04)","meet_date":"2023-09-04","is_new":false,"prev_record":null,"sort_order":14},{"id":"F_50_back","gender":"F","gender_name":"Girls","event_name":"50 Back","stroke":"Back","is_relay":false,"time_seconds":34.27,"time_formatted":"34.27","swimmer_name":"Cora Lang","swimmers":["Cora Lang"],"relay_legs":null,"meet_name":"2025 Season Meet (09/11)","meet_date":"2025-09-11","is_new":false,"prev_record":null,"sort_order":15},{"id":"F_50_breast","gender":"F","gender_name":"Girls","event_name":"50 Breast","stroke":"Breast","is_relay":false,"time_seconds":41.44,"time_formatted":"41.44","swimmer_name":"Aubrey Lang","swimmers":["Aubrey Lang"],"relay_legs":null,"meet_name":"2025 Season Meet (09/11)","meet_date":"2025-09-11","is_new":false,"prev_record":null,"sort_order":16},{"id":"M_200_medley_relay","gender":"M","gender_name":"Boys","event_name":"200 Medley Relay","stroke":"Relay","is_relay":true,"team_letter":"A","time_seconds":117.0,"time_formatted":"1:57.00","swimmer_name":"Jace Duncan, Rowan Spears, Caleb Battles, Joseph Ford","swimmers":["Jace Duncan","Rowan Spears","Caleb Battles","Joseph Ford"],"relay_legs":[{"leg":1,"role":"Back","swimmer":"Jace Duncan"},{"leg":2,"role":"Breast","swimmer":"Rowan Spears"},{"leg":3,"role":"Fly","swimmer":"Caleb Battles"},{"leg":4,"role":"Free","swimmer":"Joseph Ford"}],"meet_name":"2026 Pirate Invitational","meet_date":"2026-10-15","is_new":false,"prev_record":null,"sort_order":1},{"id":"M_200_free","gender":"M","gender_name":"Boys","event_name":"200 Free","stroke":"Free","is_relay":false,"time_seconds":124.05,"time_formatted":"2:04.05","swimmer_name":"Caleb Battles","swimmers":["Caleb Battles"],"relay_legs":null,"meet_name":"2025 Season Meet (11/10)","meet_date":"2025-11-10","is_new":false,"prev_record":null,"sort_order":2},{"id":"M_200_im","gender":"M","gender_name":"Boys","event_name":"200 IM","stroke":"IM","is_relay":false,"time_seconds":141.12,"time_formatted":"2:21.12","swimmer_name":"Jace Duncan","swimmers":["Jace Duncan"],"relay_legs":null,"meet_name":"2026 Pirate Invitational","meet_date":"2026-10-15","is_new":false,"prev_record":null,"sort_order":3},{"id":"M_50_free","gender":"M","gender_name":"Boys","event_name":"50 Free","stroke":"Free","is_relay":false,"time_seconds":24.13,"time_formatted":"24.13","swimmer_name":"Caleb Battles","swimmers":["Caleb Battles"],"relay_legs":null,"meet_name":"2026 SMPA Aquapalooza","meet_date":"2026-09-12","is_new":false,"prev_record":null,"sort_order":4},{"id":"M_100_fly","gender":"M","gender_name":"Boys","event_name":"100 Fly","stroke":"Fly","is_relay":false,"time_seconds":60.85,"time_formatted":"1:00.85","swimmer_name":"Caleb Battles","swimmers":["Caleb Battles"],"relay_legs":null,"meet_name":"2026 Albertville Invitational","meet_date":"2026-09-28","is_new":false,"prev_record":null,"sort_order":6},{"id":"M_100_free","gender":"M","gender_name":"Boys","event_name":"100 Free","stroke":"Free","is_relay":false,"time_seconds":54.19,"time_formatted":"54.19","swimmer_name":"Caleb Battles","swimmers":["Caleb Battles"],"relay_legs":null,"meet_name":"2025 Season Meet (10/30)","meet_date":"2025-10-30","is_new":false,"prev_record":null,"sort_order":7},{"id":"M_500_free","gender":"M","gender_name":"Boys","event_name":"500 Free","stroke":"Free","is_relay":false,"time_seconds":343.67,"time_formatted":"5:43.67","swimmer_name":"Jace Duncan","swimmers":["Jace Duncan"],"relay_legs":null,"meet_name":"2026 NAHSSL Championships","meet_date":"2026-10-24","is_new":true,"prev_record":"Prev: 5:56.05 (Jace Duncan) [-12.38s]","sort_order":8},{"id":"M_200_free_relay","gender":"M","gender_name":"Boys","event_name":"200 Free Relay","stroke":"Relay","is_relay":true,"team_letter":"A","time_seconds":105.82,"time_formatted":"1:45.82","swimmer_name":"Jace Duncan, Joseph Ford, Rowan Spears, Caleb Battles","swimmers":["Jace Duncan","Joseph Ford","Rowan Spears","Caleb Battles"],"relay_legs":[{"leg":1,"role":"Leg 1","swimmer":"Jace Duncan"},{"leg":2,"role":"Leg 2","swimmer":"Joseph Ford"},{"leg":3,"role":"Leg 3","swimmer":"Rowan Spears"},{"leg":4,"role":"Leg 4","swimmer":"Caleb Battles"}],"meet_name":"2026 Pirate Invitational","meet_date":"2026-10-15","is_new":false,"prev_record":null,"sort_order":9},{"id":"M_100_back","gender":"M","gender_name":"Boys","event_name":"100 Back","stroke":"Back","is_relay":false,"time_seconds":61.79,"time_formatted":"1:01.79","swimmer_name":"Caleb Battles","swimmers":["Caleb Battles"],"relay_legs":null,"meet_name":"2025 Season Meet (11/10)","meet_date":"2025-11-10","is_new":false,"prev_record":null,"sort_order":10},{"id":"M_100_breast","gender":"M","gender_name":"Boys","event_name":"100 Breast","stroke":"Breast","is_relay":false,"time_seconds":74.36,"time_formatted":"1:14.36","swimmer_name":"Rowan Spears","swimmers":["Rowan Spears"],"relay_legs":null,"meet_name":"2026 NAHSSL Championships","meet_date":"2026-10-24","is_new":true,"prev_record":"Prev: 1:14.51 (Rowan Spears) [-0.15s]","sort_order":11},{"id":"M_50_back","gender":"M","gender_name":"Boys","event_name":"50 Back","stroke":"Back","is_relay":false,"time_seconds":37.28,"time_formatted":"37.28","swimmer_name":"Caleb Battles","swimmers":["Caleb Battles"],"relay_legs":null,"meet_name":"2023 Season Meet (09/04)","meet_date":"2023-09-04","is_new":false,"prev_record":null,"sort_order":15}],"groups":[{"gender":"F","gender_name":"Girls","title":"Girls Records (Women's)","count":14,"records":[{"id":"F_200_medley_relay","gender":"F","gender_name":"Girls","event_name":"200 Medley Relay","stroke":"Relay","is_relay":true,"team_letter":"A","time_seconds":138.55,"time_formatted":"2:18.55","swimmer_name":"Cora Lang, Aubrey Lang, Brooklynn Pfeiffer, Marissa Wortham","swimmers":["Cora Lang","Aubrey Lang","Brooklynn Pfeiffer","Marissa Wortham"],"relay_legs":[{"leg":1,"role":"Back","swimmer":"Cora Lang"},{"leg":2,"role":"Breast","swimmer":"Aubrey Lang"},{"leg":3,"role":"Fly","swimmer":"Brooklynn Pfeiffer"},{"leg":4,"role":"Free","swimmer":"Marissa Wortham"}],"meet_name":"2026 NAHSSL Championships","meet_date":"2026-10-24","is_new":true,"prev_record":"Prev: 2:20.98 [-2.43s]","sort_order":1},{"id":"F_200_free","gender":"F","gender_name":"Girls","event_name":"200 Free","stroke":"Free","is_relay":false,"time_seconds":133.61,"time_formatted":"2:13.61","swimmer_name":"Aubrey Lang","swimmers":["Aubrey Lang"],"relay_legs":null,"meet_name":"2026 NAHSSL Championships","meet_date":"2026-10-24","is_new":true,"prev_record":"Prev: 2:29.52 (Aubrey Lang) [-15.91s]","sort_order":2},{"id":"F_200_im","gender":"F","gender_name":"Girls","event_name":"200 IM","stroke":"IM","is_relay":false,"time_seconds":149.92,"time_formatted":"2:29.92","swimmer_name":"Aubrey Lang","swimmers":["Aubrey Lang"],"relay_legs":null,"meet_name":"2024 Season Meet (11/14)","meet_date":"2024-11-14","is_new":false,"prev_record":null,"sort_order":3},{"id":"F_50_free","gender":"F","gender_name":"Girls","event_name":"50 Free","stroke":"Free","is_relay":false,"time_seconds":28.13,"time_formatted":"28.13","swimmer_name":"Aubrey Lang","swimmers":["Aubrey Lang"],"relay_legs":null,"meet_name":"2026 NAHSSL Championships","meet_date":"2026-10-24","is_new":true,"prev_record":"Prev: 30.92 (Cora Lang) [-2.79s]","sort_order":4},{"id":"F_100_fly","gender":"F","gender_name":"Girls","event_name":"100 Fly","stroke":"Fly","is_relay":false,"time_seconds":67.69,"time_formatted":"1:07.69","swimmer_name":"Aubrey Lang","swimmers":["Aubrey Lang"],"relay_legs":null,"meet_name":"2025 Season Meet (11/10)","meet_date":"2025-11-10","is_new":false,"prev_record":null,"sort_order":6},{"id":"F_100_free","gender":"F","gender_name":"Girls","event_name":"100 Free","stroke":"Free","is_relay":false,"time_seconds":67.97,"time_formatted":"1:07.97","swimmer_name":"Aubrey Lang","swimmers":["Aubrey Lang"],"relay_legs":null,"meet_name":"2023 Season Meet (10/12)","meet_date":"2023-10-12","is_new":false,"prev_record":null,"sort_order":7},{"id":"F_500_free","gender":"F","gender_name":"Girls","event_name":"500 Free","stroke":"Free","is_relay":false,"time_seconds":386.95,"time_formatted":"6:26.95","swimmer_name":"Aubrey Lang","swimmers":["Aubrey Lang"],"relay_legs":null,"meet_name":"2024 Season Meet (10/19)","meet_date":"2024-10-19","is_new":false,"prev_record":null,"sort_order":8},{"id":"F_200_free_relay","gender":"F","gender_name":"Girls","event_name":"200 Free Relay","stroke":"Relay","is_relay":true,"team_letter":"A","time_seconds":123.47,"time_formatted":"2:03.47","swimmer_name":"Cora Lang, Marissa Wortham, Brooklynn Pfeiffer, Aubrey Lang","swimmers":["Cora Lang","Marissa Wortham","Brooklynn Pfeiffer","Aubrey Lang"],"relay_legs":[{"leg":1,"role":"Leg 1","swimmer":"Cora Lang"},{"leg":2,"role":"Leg 2","swimmer":"Marissa Wortham"},{"leg":3,"role":"Leg 3","swimmer":"Brooklynn Pfeiffer"},{"leg":4,"role":"Leg 4","swimmer":"Aubrey Lang"}],"meet_name":"2026 NAHSSL Championships","meet_date":"2026-10-24","is_new":true,"prev_record":"Prev: 2:07.18 [-3.71s]","sort_order":9},{"id":"F_100_back","gender":"F","gender_name":"Girls","event_name":"100 Back","stroke":"Back","is_relay":false,"time_seconds":68.94,"time_formatted":"1:08.94","swimmer_name":"Aubrey Lang","swimmers":["Aubrey Lang"],"relay_legs":null,"meet_name":"2024 Season Meet (11/14)","meet_date":"2024-11-14","is_new":false,"prev_record":null,"sort_order":10},{"id":"F_100_breast","gender":"F","gender_name":"Girls","event_name":"100 Breast","stroke":"Breast","is_relay":false,"time_seconds":82.24,"time_formatted":"1:22.24","swimmer_name":"Aubrey Lang","swimmers":["Aubrey Lang"],"relay_legs":null,"meet_name":"2026 Pirate Invitational","meet_date":"2026-10-15","is_new":false,"prev_record":null,"sort_order":11},{"id":"F_400_free_relay","gender":"F","gender_name":"Girls","event_name":"400 Free Relay","stroke":"Relay","is_relay":true,"team_letter":"A","time_seconds":289.11,"time_formatted":"4:49.11","swimmer_name":"Brooklynn Pfeiffer, Marissa Wortham, Cora Lang, Aubrey Lang","swimmers":["Brooklynn Pfeiffer","Marissa Wortham","Cora Lang","Aubrey Lang"],"relay_legs":[{"leg":1,"role":"Leg 1","swimmer":"Brooklynn Pfeiffer"},{"leg":2,"role":"Leg 2","swimmer":"Marissa Wortham"},{"leg":3,"role":"Leg 3","swimmer":"Cora Lang"},{"leg":4,"role":"Leg 4","swimmer":"Aubrey Lang"}],"meet_name":"2026 Albertville Invitational","meet_date":"2026-09-28","is_new":false,"prev_record":null,"sort_order":12},{"id":"F_50_fly","gender":"F","gender_name":"Girls","event_name":"50 Fly","stroke":"Fly","is_relay":false,"time_seconds":31.31,"time_formatted":"31.31","swimmer_name":"Aubrey Lang","swimmers":["Aubrey Lang"],"relay_legs":null,"meet_name":"2023 Season Meet (09/04)","meet_date":"2023-09-04","is_new":false,"prev_record":null,"sort_order":14},{"id":"F_50_back","gender":"F","gender_name":"Girls","event_name":"50 Back","stroke":"Back","is_relay":false,"time_seconds":34.27,"time_formatted":"34.27","swimmer_name":"Cora Lang","swimmers":["Cora Lang"],"relay_legs":null,"meet_name":"2025 Season Meet (09/11)","meet_date":"2025-09-11","is_new":false,"prev_record":null,"sort_order":15},{"id":"F_50_breast","gender":"F","gender_name":"Girls","event_name":"50 Breast","stroke":"Breast","is_relay":false,"time_seconds":41.44,"time_formatted":"41.44","swimmer_name":"Aubrey Lang","swimmers":["Aubrey Lang"],"relay_legs":null,"meet_name":"2025 Season Meet (09/11)","meet_date":"2025-09-11","is_new":false,"prev_record":null,"sort_order":16}]},{"gender":"M","gender_name":"Boys","title":"Boys Records (Men's)","count":11,"records":[{"id":"M_200_medley_relay","gender":"M","gender_name":"Boys","event_name":"200 Medley Relay","stroke":"Relay","is_relay":true,"team_letter":"A","time_seconds":117.0,"time_formatted":"1:57.00","swimmer_name":"Jace Duncan, Rowan Spears, Caleb Battles, Joseph Ford","swimmers":["Jace Duncan","Rowan Spears","Caleb Battles","Joseph Ford"],"relay_legs":[{"leg":1,"role":"Back","swimmer":"Jace Duncan"},{"leg":2,"role":"Breast","swimmer":"Rowan Spears"},{"leg":3,"role":"Fly","swimmer":"Caleb Battles"},{"leg":4,"role":"Free","swimmer":"Joseph Ford"}],"meet_name":"2026 Pirate Invitational","meet_date":"2026-10-15","is_new":false,"prev_record":null,"sort_order":1},{"id":"M_200_free","gender":"M","gender_name":"Boys","event_name":"200 Free","stroke":"Free","is_relay":false,"time_seconds":124.05,"time_formatted":"2:04.05","swimmer_name":"Caleb Battles","swimmers":["Caleb Battles"],"relay_legs":null,"meet_name":"2025 Season Meet (11/10)","meet_date":"2025-11-10","is_new":false,"prev_record":null,"sort_order":2},{"id":"M_200_im","gender":"M","gender_name":"Boys","event_name":"200 IM","stroke":"IM","is_relay":false,"time_seconds":141.12,"time_formatted":"2:21.12","swimmer_name":"Jace Duncan","swimmers":["Jace Duncan"],"relay_legs":null,"meet_name":"2026 Pirate Invitational","meet_date":"2026-10-15","is_new":false,"prev_record":null,"sort_order":3},{"id":"M_50_free","gender":"M","gender_name":"Boys","event_name":"50 Free","stroke":"Free","is_relay":false,"time_seconds":24.13,"time_formatted":"24.13","swimmer_name":"Caleb Battles","swimmers":["Caleb Battles"],"relay_legs":null,"meet_name":"2026 SMPA Aquapalooza","meet_date":"2026-09-12","is_new":false,"prev_record":null,"sort_order":4},{"id":"M_100_fly","gender":"M","gender_name":"Boys","event_name":"100 Fly","stroke":"Fly","is_relay":false,"time_seconds":60.85,"time_formatted":"1:00.85","swimmer_name":"Caleb Battles","swimmers":["Caleb Battles"],"relay_legs":null,"meet_name":"2026 Albertville Invitational","meet_date":"2026-09-28","is_new":false,"prev_record":null,"sort_order":6},{"id":"M_100_free","gender":"M","gender_name":"Boys","event_name":"100 Free","stroke":"Free","is_relay":false,"time_seconds":54.19,"time_formatted":"54.19","swimmer_name":"Caleb Battles","swimmers":["Caleb Battles"],"relay_legs":null,"meet_name":"2025 Season Meet (10/30)","meet_date":"2025-10-30","is_new":false,"prev_record":null,"sort_order":7},{"id":"M_500_free","gender":"M","gender_name":"Boys","event_name":"500 Free","stroke":"Free","is_relay":false,"time_seconds":343.67,"time_formatted":"5:43.67","swimmer_name":"Jace Duncan","swimmers":["Jace Duncan"],"relay_legs":null,"meet_name":"2026 NAHSSL Championships","meet_date":"2026-10-24","is_new":true,"prev_record":"Prev: 5:56.05 (Jace Duncan) [-12.38s]","sort_order":8},{"id":"M_200_free_relay","gender":"M","gender_name":"Boys","event_name":"200 Free Relay","stroke":"Relay","is_relay":true,"team_letter":"A","time_seconds":105.82,"time_formatted":"1:45.82","swimmer_name":"Jace Duncan, Joseph Ford, Rowan Spears, Caleb Battles","swimmers":["Jace Duncan","Joseph Ford","Rowan Spears","Caleb Battles"],"relay_legs":[{"leg":1,"role":"Leg 1","swimmer":"Jace Duncan"},{"leg":2,"role":"Leg 2","swimmer":"Joseph Ford"},{"leg":3,"role":"Leg 3","swimmer":"Rowan Spears"},{"leg":4,"role":"Leg 4","swimmer":"Caleb Battles"}],"meet_name":"2026 Pirate Invitational","meet_date":"2026-10-15","is_new":false,"prev_record":null,"sort_order":9},{"id":"M_100_back","gender":"M","gender_name":"Boys","event_name":"100 Back","stroke":"Back","is_relay":false,"time_seconds":61.79,"time_formatted":"1:01.79","swimmer_name":"Caleb Battles","swimmers":["Caleb Battles"],"relay_legs":null,"meet_name":"2025 Season Meet (11/10)","meet_date":"2025-11-10","is_new":false,"prev_record":null,"sort_order":10},{"id":"M_100_breast","gender":"M","gender_name":"Boys","event_name":"100 Breast","stroke":"Breast","is_relay":false,"time_seconds":74.36,"time_formatted":"1:14.36","swimmer_name":"Rowan Spears","swimmers":["Rowan Spears"],"relay_legs":null,"meet_name":"2026 NAHSSL Championships","meet_date":"2026-10-24","is_new":true,"prev_record":"Prev: 1:14.51 (Rowan Spears) [-0.15s]","sort_order":11},{"id":"M_50_back","gender":"M","gender_name":"Boys","event_name":"50 Back","stroke":"Back","is_relay":false,"time_seconds":37.28,"time_formatted":"37.28","swimmer_name":"Caleb Battles","swimmers":["Caleb Battles"],"relay_legs":null,"meet_name":"2023 Season Meet (09/04)","meet_date":"2023-09-04","is_new":false,"prev_record":null,"sort_order":15}]}]}</script>
 
-  <!-- Application Logic -->
+  <!-- Application Logic (MCSC table style) -->
   <script>
     let rawData = null;
     let selectedGender = 'all';
     let selectedStroke = 'all';
-    let onlyNew = false;
+    let filterNewOnly = false;
     let searchQuery = '';
 
     // Theme Management
-    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const themeBtn = document.getElementById('themeToggleBtn');
     const themeIcon = document.getElementById('themeIcon');
     const themeText = document.getElementById('themeText');
 
-    function initTheme() {
-      const savedTheme = localStorage.getItem('shs_records_theme') || 'dark';
-      document.documentElement.setAttribute('data-theme', savedTheme);
-      updateThemeButton(savedTheme);
+    function getStoredTheme() {
+      return localStorage.getItem('shs_records_theme') || 'dark';
     }
 
-    function updateThemeButton(theme) {
+    function setStoredTheme(theme) {
+      localStorage.setItem('shs_records_theme', theme);
+    }
+
+    function setTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      setStoredTheme(theme);
       if (theme === 'dark') {
         themeIcon.textContent = '☀️';
         themeText.textContent = 'Light Mode';
@@ -717,39 +722,62 @@
       }
     }
 
-    themeToggleBtn.addEventListener('click', () => {
+    setTheme(getStoredTheme());
+
+    themeBtn.addEventListener('click', () => {
       const current = document.documentElement.getAttribute('data-theme') || 'dark';
-      const next = current === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('shs_records_theme', next);
-      updateThemeButton(next);
+      setTheme(current === 'dark' ? 'light' : 'dark');
     });
 
-    initTheme();
+    // Helper: Stroke class for stroke-dot indicator
+    function getStrokeClass(strokeName, eventName) {
+      const s = (strokeName || '').toLowerCase();
+      const ev = (eventName || '').toLowerCase();
+      if (s === 'relay' || ev.includes('relay')) return 'stroke-relay';
+      if (s === 'free' || ev.includes('free')) return 'stroke-free';
+      if (s === 'back' || ev.includes('back')) return 'stroke-back';
+      if (s === 'breast' || ev.includes('breast')) return 'stroke-breast';
+      if (s === 'fly' || ev.includes('fly')) return 'stroke-fly';
+      if (s === 'im' || ev.includes('im') || ev.includes('medley')) return 'stroke-im';
+      return 'stroke-free';
+    }
 
-    // Filter Listeners
-    document.querySelectorAll('.filter-pill[data-gender]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter-pill[data-gender]').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        selectedGender = btn.dataset.gender;
+    // Format Date helper
+    function formatDate(dateStr) {
+      if (!dateStr) return '';
+      try {
+        const parts = dateStr.split('-');
+        if (parts.length === 3) {
+          const d = new Date(parts[0], parts[1] - 1, parts[2]);
+          return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+      } catch (e) {}
+      return dateStr;
+    }
+
+    // Filter listeners
+    document.querySelectorAll('.filter-pill[data-gender]').forEach(pill => {
+      pill.addEventListener('click', (e) => {
+        document.querySelectorAll('.filter-pill[data-gender]').forEach(p => p.classList.remove('active'));
+        e.target.classList.add('active');
+        selectedGender = e.target.getAttribute('data-gender');
         render();
       });
     });
 
-    document.querySelectorAll('.filter-pill[data-stroke]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter-pill[data-stroke]').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        selectedStroke = btn.dataset.stroke;
+    document.querySelectorAll('.filter-pill[data-stroke]').forEach(pill => {
+      pill.addEventListener('click', (e) => {
+        document.querySelectorAll('.filter-pill[data-stroke]').forEach(p => p.classList.remove('active'));
+        e.target.classList.add('active');
+        selectedStroke = e.target.getAttribute('data-stroke');
         render();
       });
     });
 
     const newFilterBtn = document.getElementById('newFilterBtn');
     newFilterBtn.addEventListener('click', () => {
-      onlyNew = !onlyNew;
-      newFilterBtn.classList.toggle('active', onlyNew);
+      filterNewOnly = !filterNewOnly;
+      newFilterBtn.classList.toggle('active', filterNewOnly);
       render();
     });
 
@@ -769,159 +797,166 @@
       render();
     });
 
-    // Formatting date helper
-    function formatDate(dateStr) {
-      if (!dateStr) return '';
-      try {
-        const parts = dateStr.split('-');
-        if (parts.length === 3) {
-          const d = new Date(parts[0], parts[1] - 1, parts[2]);
-          return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        }
-      } catch (e) {}
-      return dateStr;
-    }
-
-    // Render Records
+    // Render Records (Table layout matching MCSC)
     function render() {
       const container = document.getElementById('recordsContainer');
-      if (!rawData || !rawData.records || rawData.records.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <h3>No team records found</h3>
-            <p>Records database is currently empty.</p>
-          </div>
-        `;
+      if (!rawData) {
+        container.innerHTML = '<div class="empty-state"><h3>No records found.</h3></div>';
         return;
       }
 
-      // Filter
-      let filtered = rawData.records.filter(r => {
-        // Gender filter
-        if (selectedGender !== 'all' && r.gender !== selectedGender) return false;
-        // Stroke filter
-        if (selectedStroke !== 'all') {
-          if (selectedStroke === 'Relay' && !r.is_relay) return false;
-          if (selectedStroke !== 'Relay' && r.stroke !== selectedStroke) return false;
+      // Build groups if not directly present
+      const groups = rawData.groups || [
+        {
+          gender: 'F',
+          gender_name: 'Girls',
+          title: "Girls Records (Women's)",
+          records: (rawData.records || []).filter(r => r.gender === 'F')
+        },
+        {
+          gender: 'M',
+          gender_name: 'Boys',
+          title: "Boys Records (Men's)",
+          records: (rawData.records || []).filter(r => r.gender === 'M')
         }
-        // Only new filter
-        if (onlyNew && !r.is_new) return false;
-        // Search filter
-        if (searchQuery) {
-          const text = [
-            r.event_name,
-            r.swimmer_name,
-            r.meet_name,
-            r.time_formatted,
-            r.stroke,
-            r.gender_name
-          ].join(' ').toLowerCase();
-          if (!text.includes(searchQuery)) return false;
-        }
-        return true;
-      });
+      ];
 
-      if (filtered.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <h3>No matching team records</h3>
-            <p>Try clearing your filters or searching with a different term.</p>
-          </div>
-        `;
-        return;
-      }
-
-      // Group by Gender
-      const girlsRecords = filtered.filter(r => r.gender === 'F');
-      const boysRecords = filtered.filter(r => r.gender === 'M');
-
+      let totalMatchingRecords = 0;
       let html = '';
 
-      if (girlsRecords.length > 0) {
-        html += renderGenderSection("Girls Records (Women's)", girlsRecords, "🏊‍♀️");
-      }
+      groups.forEach(group => {
+        // Gender filter
+        if (selectedGender !== 'all' && group.gender !== selectedGender) return;
 
-      if (boysRecords.length > 0) {
-        html += renderGenderSection("Boys Records (Men's)", boysRecords, "🏊‍♂️");
-      }
+        // Filter records within group
+        const matchingRecords = group.records.filter(r => {
+          if (filterNewOnly && !r.is_new) return false;
 
-      container.innerHTML = html;
-    }
+          // Stroke filter
+          if (selectedStroke !== 'all') {
+            if (selectedStroke === 'Relay' && !r.is_relay) return false;
+            if (selectedStroke !== 'Relay' && r.stroke !== selectedStroke) return false;
+          }
 
-    function renderGenderSection(title, records, icon) {
-      return `
-        <section class="gender-section">
-          <div class="gender-header">
-            <h2><span>${icon}</span> ${title}</h2>
-            <span class="badge">${records.length} ${records.length === 1 ? 'Record' : 'Records'}</span>
+          // Search filter
+          if (searchQuery) {
+            const matchesName = (r.swimmer_name || '').toLowerCase().includes(searchQuery);
+            const matchesEvent = (r.event_name || '').toLowerCase().includes(searchQuery);
+            const matchesTime = (r.time_formatted || '').toLowerCase().includes(searchQuery);
+            const matchesDate = (r.meet_date || '').toLowerCase().includes(searchQuery);
+            const matchesMeet = (r.meet_name || '').toLowerCase().includes(searchQuery);
+            if (!matchesName && !matchesEvent && !matchesTime && !matchesDate && !matchesMeet) return false;
+          }
+          return true;
+        });
+
+        if (matchingRecords.length === 0) return;
+
+        totalMatchingRecords += matchingRecords.length;
+
+        const isGirls = group.gender === 'F';
+        const genderClass = isGirls ? 'girls' : 'boys';
+        const genderLabel = isGirls ? 'Girls' : 'Boys';
+
+        html += `
+          <div class="records-group">
+            <div class="group-header">
+              <div class="group-title-wrap">
+                <span class="gender-tag ${genderClass}">${genderLabel}</span>
+                <h2 class="group-title">${group.title}</h2>
+              </div>
+              <span class="group-count">${matchingRecords.length} ${matchingRecords.length === 1 ? 'event' : 'events'}</span>
+            </div>
+            <div class="table-container">
+              <table class="records-table">
+                <thead>
+                  <tr>
+                    <th>Event</th>
+                    <th>Record Time</th>
+                    <th>Record Holder</th>
+                    <th>Date Set</th>
+                  </tr>
+                </thead>
+                <tbody>
+        `;
+
+        matchingRecords.forEach(r => {
+          const strokeClass = getStrokeClass(r.stroke, r.event_name);
+          const newBadge = r.is_new ? '<span class="badge-new">NEW!</span>' : '';
+          const timeClass = r.is_new ? 'time-cell is-new' : 'time-cell';
+
+          let swimmerContent = `<div class="swimmer-cell">${r.swimmer_name}</div>`;
+          if (r.is_relay && r.swimmers && r.swimmers.length > 0) {
+            swimmerContent = `
+              <div class="swimmer-cell">${r.event_name} Squad</div>
+              <div class="relay-roster">${r.swimmers.join(' &bull; ')}</div>
+            `;
+          }
+
+          let prevDropText = '';
+          if (r.is_new && r.prev_record) {
+            prevDropText = `<span class="prev-drop">${r.prev_record}</span>`;
+          }
+
+          html += `
+            <tr>
+              <td>
+                <div class="event-cell">
+                  <span class="stroke-dot ${strokeClass}"></span>
+                  ${r.event_name}
+                </div>
+              </td>
+              <td>
+                <div class="${timeClass}">
+                  ${r.time_formatted}
+                  ${newBadge}
+                </div>
+                ${prevDropText}
+              </td>
+              <td>${swimmerContent}</td>
+              <td class="date-cell">
+                <div>${formatDate(r.meet_date)}</div>
+                <div class="meet-subtext" title="${r.meet_name}">${r.meet_name}</div>
+              </td>
+            </tr>
+          `;
+        });
+
+        html += `
+                </tbody>
+              </table>
+            </div>
           </div>
-          <div class="records-grid">
-            ${records.map(r => renderRecordCard(r)).join('')}
-          </div>
-        </section>
-      `;
-    }
+        `;
+      });
 
-    function renderRecordCard(r) {
-      const isNewClass = r.is_new ? 'is-new' : '';
-      let swimmerHtml = '';
-
-      if (r.is_relay && r.relay_legs && r.relay_legs.length > 0) {
-        swimmerHtml = `
-          <div class="relay-wrap">
-            <ul class="relay-legs-list">
-              ${r.relay_legs.map(leg => `
-                <li class="relay-leg-item">
-                  <span class="role">${leg.role}</span>
-                  <span class="name">${leg.swimmer}</span>
-                </li>
-              `).join('')}
-            </ul>
+      if (totalMatchingRecords === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <h3>No matching records found</h3>
+            <p>Try clearing your search query or selecting a different filter.</p>
           </div>
         `;
       } else {
-        swimmerHtml = `
-          <div class="swimmer-name">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--shs-crimson-light); flex-shrink: 0;">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-            <span>${r.swimmer_name}</span>
-          </div>
-        `;
+        container.innerHTML = html;
       }
 
-      return `
-        <div class="record-card ${isNewClass}">
-          <div>
-            ${r.is_new ? '<div class="new-tag">✨ NEW RECORD</div>' : ''}
-            <div class="card-top">
-              <div class="event-info">
-                <div class="event-name">${r.event_name}</div>
-                <span class="stroke-tag ${r.stroke}">${r.stroke}</span>
-              </div>
-              <div class="time-badge">${r.time_formatted}</div>
-            </div>
-
-            <div class="card-body">
-              ${swimmerHtml}
-              ${r.prev_record ? `<div class="prev-record-alert">${r.prev_record}</div>` : ''}
-            </div>
-          </div>
-
-          <div class="card-footer">
-            <span class="meet-name" title="${r.meet_name}">${r.meet_name}</span>
-            <span class="meet-date">${formatDate(r.meet_date)}</span>
-          </div>
-        </div>
-      `;
+      // Notify parent iframe (if embedded on commit swim / website) for auto-resize
+      if (window.parent && window.parent !== window) {
+        try {
+          window.parent.postMessage({
+            type: 'shs-records-resize',
+            height: document.body.scrollHeight
+          }, '*');
+        } catch (e) {}
+      }
     }
 
     // Populate header stats
     function initData() {
       if (!rawData) return;
 
-      document.getElementById('totalRecordsBadge').textContent = `${rawData.total_records || 0} Team Records`;
+      document.getElementById('totalRecordsBadge').textContent = `${rawData.total_records || 0} Active Records`;
 
       if (rawData.latest_meet) {
         document.getElementById('lastMeetName').textContent = rawData.latest_meet.name || '--';
@@ -968,7 +1003,7 @@
       if (embedded && embedded.textContent.trim()) {
         try {
           const parsed = JSON.parse(embedded.textContent);
-          if (parsed && parsed.records && parsed.records.length > 0) {
+          if (parsed && (parsed.records || parsed.groups)) {
             rawData = parsed;
             initData();
             return;

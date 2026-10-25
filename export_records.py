@@ -278,6 +278,26 @@ def build_team_records_data(db_path: str = DB_PATH) -> Dict[str, Any]:
 
     new_count = sum(1 for r in records_list if r["is_new"])
 
+    girls_records = [r for r in records_list if r["gender"] == "F"]
+    boys_records = [r for r in records_list if r["gender"] == "M"]
+
+    groups = [
+        {
+            "gender": "F",
+            "gender_name": "Girls",
+            "title": "Girls Records (Women's)",
+            "count": len(girls_records),
+            "records": girls_records
+        },
+        {
+            "gender": "M",
+            "gender_name": "Boys",
+            "title": "Boys Records (Men's)",
+            "count": len(boys_records),
+            "records": boys_records
+        }
+    ]
+
     return {
         "team": "SHS",
         "team_name": "Sardis High School",
@@ -289,7 +309,8 @@ def build_team_records_data(db_path: str = DB_PATH) -> Dict[str, Any]:
         },
         "total_records": len(records_list),
         "new_records_count": new_count,
-        "records": records_list
+        "records": records_list,
+        "groups": groups
     }
 
 def sync_embedded_records_in_html(json_data: Dict[str, Any], html_path: str = INDEX_HTML) -> bool:
