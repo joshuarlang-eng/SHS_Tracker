@@ -72,3 +72,17 @@ Access the app across your local network or Tailscale at:
 - SQLite database located at `data/sardis_swim.db`.
 - Meet files stored in `times/`.
 - Diffable CSV exports stored in `data/` (`Swimmers.csv`, `Meets.csv`, `Swim_times.csv`, `Relays.csv`, `Sqt_standards.csv`).
+
+---
+
+## 🌐 Public Team Records Website (GitHub Pages)
+
+- **Live URL:** `https://joshuarlang-eng.github.io/SHS_Tracker/`
+- **Embed URL:** Can be embedded on the official SHS website or athletics page using an iframe:
+  ```html
+  <iframe src="https://joshuarlang-eng.github.io/SHS_Tracker/" width="100%" height="900" frameborder="0"></iframe>
+  ```
+- **Auto-Sync:**
+  - When new meet `.cl2` files are uploaded in the Streamlit app on the mini-PC, team records are automatically compiled to `records.json` and committed & pushed to GitHub (`origin main`).
+  - GitHub Actions (`.github/workflows/pages.yml`) automatically deploys the updated team records in ~25 seconds.
+  - Manual sync can also be triggered via the Streamlit UI ("Data Management" tab) or by running `./sync.sh`.

@@ -1340,11 +1340,24 @@ def tab_data_manager():
             results = db.import_all_meets_in_times()
             db.export_data_to_csv()
             st.success("Successfully imported and updated season bests!")
+
+            # Auto-export team records & push to GitHub Pages
+            with st.spinner("Pushing updated team records to GitHub Pages..."):
+                try:
+                    import export_records
+                    success, msg = export_records.export_and_push(uploaded_file.name)
+                    if success:
+                        st.success(f"🌐 GitHub Pages: {msg}")
+                    else:
+                        st.warning(f"⚠️ GitHub Pages push note: {msg}")
+                except Exception as e:
+                    st.warning(f"⚠️ Could not push to GitHub Pages: {e}")
+
             st.rerun()
 
     st.write("")
     st.markdown("#### 🔄 Re-Sync & Export Data")
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
     with col1:
         if st.button("🔁 Re-scan All Meets in Times Folder"):
             with st.spinner("Re-importing meets..."):
@@ -1356,6 +1369,18 @@ def tab_data_manager():
         if st.button("💾 Export SQLite Tables to CSV"):
             db.export_data_to_csv()
             st.success("CSVs exported to data/ folder for diffable backup!")
+    with col3:
+        if st.button("🌐 Push Records to GitHub Pages"):
+            with st.spinner("Exporting & pushing records to GitHub Pages..."):
+                try:
+                    import export_records
+                    success, msg = export_records.export_and_push()
+                    if success:
+                        st.success(f"✅ {msg}")
+                    else:
+                        st.error(f"❌ {msg}")
+                except Exception as e:
+                    st.error(f"❌ Error: {e}")
 
     st.write("")
     st.markdown("#### ⏱️ Swimmer Split Times & Exclusion Manager")

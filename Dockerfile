@@ -6,16 +6,25 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-# Install curl for container healthcheck
-RUN apt-get update && apt-get install -y --no-install-recommends curl \
+# Install curl for container healthcheck and git + openssh-client for GitHub Pages push
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    git \
+    openssh-client \
     && rm -rf /var/lib/apt/lists/*
+
+# Configure git safe directory and identity
+RUN git config --global --add safe.directory /app \
+    && git config --global --add safe.directory '*' \
+    && git config --global user.name "Joshua Lang" \
+    && git config --global user.email "joshua.r.lang@gmail.com"
 
 # Install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application source code and assets
-COPY app.py main.py db.py Icon.png ./
+COPY app.py main.py db.py export_records.py sync.sh index.html records.json Icon.png ./
 COPY .streamlit ./.streamlit
 COPY static ./static
 COPY times ./times

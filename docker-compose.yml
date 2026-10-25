@@ -6,8 +6,8 @@ services:
     ports:
       - "8503:8501"
     volumes:
-      - ./data:/app/data
-      - ./times:/app/times
+      - .:/app
+      - /home/jrl/.ssh:/root/.ssh:ro
     environment:
       - STREAMLIT_SERVER_PORT=8501
       - STREAMLIT_SERVER_ADDRESS=0.0.0.0

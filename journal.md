@@ -74,3 +74,14 @@ AHSAA 1A–5A State Championship Qualifying standards:
 - **Database:** Local SQLite (`data/sardis_swim.db`)
 - **Visuals:** Altair declarative charts
 - **Deployment:** Docker & Docker Compose on Port `8503:8501`
+- **Public Team Records Site:** Static HTML5 / CSS3 / Vanilla JS on GitHub Pages (`https://joshuarlang-eng.github.io/SHS_Tracker/`)
+
+---
+
+## 6. Public GitHub Pages Records Pipeline (SHS Website Integration)
+
+To provide official Short Course Yards (SCY) team records for the Sardis High School athletics website, a public-facing static records widget was deployed:
+1. **`export_records.py`**: Extracts all-time best times per event for Girls and Boys, formats times, tracks broken records, and outputs `records.json` while syncing embedded JSON in `index.html`.
+2. **`index.html`**: A mobile-responsive web dashboard with Sardis Crimson (`#8B0526`) palette, instant search, stroke filters, gender pills, dark/light mode toggle, and dynamic `NEW RECORD!` badges.
+3. **`.github/workflows/pages.yml`**: GitHub Actions workflow that automatically deploys the static files to GitHub Pages upon push to `main`.
+4. **Direct Push from Mini-PC**: Integrated into `app.py` meet ingestion workflow so that whenever a new meet file is uploaded and processed on the mini-PC, team records are automatically compiled and pushed to GitHub.
