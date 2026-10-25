@@ -2,12 +2,12 @@
   "team": "SHS",
   "team_name": "Sardis High School",
   "mascot": "Lions",
-  "last_updated": "2026-10-25T01:45:21.771266",
+  "last_updated": "2026-10-24T21:04:59.944349",
   "latest_meet": {
     "name": "2026 NAHSSL Championships",
     "date": "2026-10-24"
   },
-  "total_records": 27,
+  "total_records": 28,
   "new_records_count": 6,
   "records": [
     {
@@ -52,7 +52,7 @@
       "meet_name": "2026 NAHSSL Championships",
       "meet_date": "2026-10-24",
       "is_new": true,
-      "prev_record": "Prev: 2:21.66 [-3.11s]",
+      "prev_record": "Prev: 2:20.98 [-2.43s]",
       "sort_order": 1
     },
     {
@@ -72,7 +72,7 @@
       "meet_name": "2026 NAHSSL Championships",
       "meet_date": "2026-10-24",
       "is_new": true,
-      "prev_record": "Prev: 2:37.37 (Brooklynn Pfeiffer) [-23.76s]",
+      "prev_record": "Prev: 2:29.52 (Aubrey Lang) [-15.91s]",
       "sort_order": 2
     },
     {
@@ -82,15 +82,15 @@
       "event_name": "200 IM",
       "stroke": "IM",
       "is_relay": false,
-      "time_seconds": 153.58,
-      "time_formatted": "2:33.58",
+      "time_seconds": 149.92,
+      "time_formatted": "2:29.92",
       "swimmer_name": "Aubrey Lang",
       "swimmers": [
         "Aubrey Lang"
       ],
       "relay_legs": null,
-      "meet_name": "2026 Pirate Invitational",
-      "meet_date": "2026-10-15",
+      "meet_name": "2024 Season Meet (11/14)",
+      "meet_date": "2024-11-14",
       "is_new": false,
       "prev_record": null,
       "sort_order": 3
@@ -122,15 +122,15 @@
       "event_name": "100 Fly",
       "stroke": "Fly",
       "is_relay": false,
-      "time_seconds": 70.87,
-      "time_formatted": "1:10.87",
+      "time_seconds": 67.69,
+      "time_formatted": "1:07.69",
       "swimmer_name": "Aubrey Lang",
       "swimmers": [
         "Aubrey Lang"
       ],
       "relay_legs": null,
-      "meet_name": "2026 SES WAKE-CTA Spooky Splash",
-      "meet_date": "2026-10-03",
+      "meet_name": "2025 Season Meet (11/10)",
+      "meet_date": "2025-11-10",
       "is_new": false,
       "prev_record": null,
       "sort_order": 6
@@ -142,15 +142,15 @@
       "event_name": "100 Free",
       "stroke": "Free",
       "is_relay": false,
-      "time_seconds": 71.64,
-      "time_formatted": "1:11.64",
-      "swimmer_name": "Brooklynn Pfeiffer",
+      "time_seconds": 67.97,
+      "time_formatted": "1:07.97",
+      "swimmer_name": "Aubrey Lang",
       "swimmers": [
-        "Brooklynn Pfeiffer"
+        "Aubrey Lang"
       ],
       "relay_legs": null,
-      "meet_name": "2026 Pirate Invitational",
-      "meet_date": "2026-10-15",
+      "meet_name": "2023 Season Meet (10/12)",
+      "meet_date": "2023-10-12",
       "is_new": false,
       "prev_record": null,
       "sort_order": 7
@@ -162,15 +162,15 @@
       "event_name": "500 Free",
       "stroke": "Free",
       "is_relay": false,
-      "time_seconds": 395.61,
-      "time_formatted": "6:35.61",
+      "time_seconds": 386.95,
+      "time_formatted": "6:26.95",
       "swimmer_name": "Aubrey Lang",
       "swimmers": [
         "Aubrey Lang"
       ],
       "relay_legs": null,
-      "meet_name": "2026 SES WAKE-CTA Spooky Splash",
-      "meet_date": "2026-10-03",
+      "meet_name": "2024 Season Meet (10/19)",
+      "meet_date": "2024-10-19",
       "is_new": false,
       "prev_record": null,
       "sort_order": 8
@@ -227,15 +227,15 @@
       "event_name": "100 Back",
       "stroke": "Back",
       "is_relay": false,
-      "time_seconds": 69.27,
-      "time_formatted": "1:09.27",
+      "time_seconds": 68.94,
+      "time_formatted": "1:08.94",
       "swimmer_name": "Aubrey Lang",
       "swimmers": [
         "Aubrey Lang"
       ],
       "relay_legs": null,
-      "meet_name": "2026 SES WAKE-CTA Spooky Splash",
-      "meet_date": "2026-10-03",
+      "meet_name": "2024 Season Meet (11/14)",
+      "meet_date": "2024-11-14",
       "is_new": false,
       "prev_record": null,
       "sort_order": 10
@@ -332,18 +332,38 @@
       "event_name": "50 Fly",
       "stroke": "Fly",
       "is_relay": false,
-      "time_seconds": 33.14,
-      "time_formatted": "33.14",
+      "time_seconds": 31.31,
+      "time_formatted": "31.31",
+      "swimmer_name": "Aubrey Lang",
+      "swimmers": [
+        "Aubrey Lang"
+      ],
+      "relay_legs": null,
+      "meet_name": "2023 Season Meet (09/04)",
+      "meet_date": "2023-09-04",
+      "is_new": false,
+      "prev_record": null,
+      "sort_order": 14
+    },
+    {
+      "id": "F_50_back",
+      "gender": "F",
+      "gender_name": "Girls",
+      "event_name": "50 Back",
+      "stroke": "Back",
+      "is_relay": false,
+      "time_seconds": 34.27,
+      "time_formatted": "34.27",
       "swimmer_name": "Cora Lang",
       "swimmers": [
         "Cora Lang"
       ],
       "relay_legs": null,
-      "meet_name": "2026 SES WAKE-CTA Spooky Splash",
-      "meet_date": "2026-10-03",
+      "meet_name": "2025 Season Meet (09/11)",
+      "meet_date": "2025-09-11",
       "is_new": false,
       "prev_record": null,
-      "sort_order": 14
+      "sort_order": 15
     },
     {
       "id": "F_50_breast",
@@ -352,15 +372,15 @@
       "event_name": "50 Breast",
       "stroke": "Breast",
       "is_relay": false,
-      "time_seconds": 41.45,
-      "time_formatted": "41.45",
-      "swimmer_name": "Cora Lang",
+      "time_seconds": 41.44,
+      "time_formatted": "41.44",
+      "swimmer_name": "Aubrey Lang",
       "swimmers": [
-        "Cora Lang"
+        "Aubrey Lang"
       ],
       "relay_legs": null,
-      "meet_name": "2026 SES WAKE-CTA Spooky Splash",
-      "meet_date": "2026-10-03",
+      "meet_name": "2025 Season Meet (09/11)",
+      "meet_date": "2025-09-11",
       "is_new": false,
       "prev_record": null,
       "sort_order": 16
@@ -417,15 +437,15 @@
       "event_name": "200 Free",
       "stroke": "Free",
       "is_relay": false,
-      "time_seconds": 129.91,
-      "time_formatted": "2:09.91",
+      "time_seconds": 124.05,
+      "time_formatted": "2:04.05",
       "swimmer_name": "Caleb Battles",
       "swimmers": [
         "Caleb Battles"
       ],
       "relay_legs": null,
-      "meet_name": "2026 Pirate Invitational",
-      "meet_date": "2026-10-15",
+      "meet_name": "2025 Season Meet (11/10)",
+      "meet_date": "2025-11-10",
       "is_new": false,
       "prev_record": null,
       "sort_order": 2
@@ -582,15 +602,15 @@
       "event_name": "100 Back",
       "stroke": "Back",
       "is_relay": false,
-      "time_seconds": 65.56,
-      "time_formatted": "1:05.56",
-      "swimmer_name": "Jace Duncan",
+      "time_seconds": 61.79,
+      "time_formatted": "1:01.79",
+      "swimmer_name": "Caleb Battles",
       "swimmers": [
-        "Jace Duncan"
+        "Caleb Battles"
       ],
       "relay_legs": null,
-      "meet_name": "2026 SES WAKE-CTA Spooky Splash",
-      "meet_date": "2026-10-03",
+      "meet_name": "2025 Season Meet (11/10)",
+      "meet_date": "2025-11-10",
       "is_new": false,
       "prev_record": null,
       "sort_order": 10
