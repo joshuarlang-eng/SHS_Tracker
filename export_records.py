@@ -83,10 +83,12 @@ def build_team_records_data(db_path: str = DB_PATH) -> Dict[str, Any]:
     conn = get_connection(db_path)
     cur = conn.cursor()
 
-    # 1. Identify latest meet
+    # 1. Identify latest SHS meet (excluding club meets like Spooky Splash)
     cur.execute("""
         SELECT id, meet_name, meet_date 
         FROM meets 
+        WHERE (is_shs_meet = 1 OR is_shs_meet IS NULL) 
+          AND meet_name NOT LIKE '%Spooky Splash%'
         ORDER BY meet_date DESC, created_at DESC 
         LIMIT 1;
     """)
@@ -95,7 +97,7 @@ def build_team_records_data(db_path: str = DB_PATH) -> Dict[str, Any]:
     latest_meet_name = latest_meet_row[1] if latest_meet_row else "Initial"
     latest_meet_date = latest_meet_row[2] if latest_meet_row else datetime.now().strftime("%Y-%m-%d")
 
-    # 2. Individual Records
+    # 2. Individual Records (only official SHS sanctioned meets count for school records)
     indiv_query = """
     WITH RankedSwims AS (
         SELECT 
@@ -114,7 +116,9 @@ def build_team_records_data(db_path: str = DB_PATH) -> Dict[str, Any]:
         FROM swim_times st
         JOIN swimmers s ON st.swimmer_id = s.id
         JOIN meets m ON st.meet_id = m.id
-        WHERE st.is_dq = 0
+        WHERE st.is_dq = 0 
+          AND (m.is_shs_meet = 1 OR m.is_shs_meet IS NULL)
+          AND m.meet_name NOT LIKE '%Spooky Splash%'
     )
     SELECT event_name, gender, time_seconds, time_display, swimmer_name, meet_id, meet_name, meet_date
     FROM RankedSwims
@@ -142,6 +146,8 @@ def build_team_records_data(db_path: str = DB_PATH) -> Dict[str, Any]:
                   AND st.event_name = ? 
                   AND s.gender = ? 
                   AND m.id != ?
+                  AND (m.is_shs_meet = 1 OR m.is_shs_meet IS NULL)
+                  AND m.meet_name NOT LIKE '%Spooky Splash%'
                 ORDER BY st.time_seconds ASC
                 LIMIT 1;
             """, (ev_name, gender, latest_meet_id))
@@ -198,6 +204,8 @@ def build_team_records_data(db_path: str = DB_PATH) -> Dict[str, Any]:
         LEFT JOIN swimmers s3 ON r.swimmer3_id = s3.id
         LEFT JOIN swimmers s4 ON r.swimmer4_id = s4.id
         WHERE r.time_seconds IS NOT NULL
+          AND (m.is_shs_meet = 1 OR m.is_shs_meet IS NULL)
+          AND m.meet_name NOT LIKE '%Spooky Splash%'
     )
     SELECT event_name, gender, time_seconds, time_display, team_letter, meet_id, meet_name, meet_date, leg1, leg2, leg3, leg4
     FROM RankedRelays
@@ -231,6 +239,8 @@ def build_team_records_data(db_path: str = DB_PATH) -> Dict[str, Any]:
                 WHERE r.event_name = ? 
                   AND r.gender = ? 
                   AND m.id != ?
+                  AND (m.is_shs_meet = 1 OR m.is_shs_meet IS NULL)
+                  AND m.meet_name NOT LIKE '%Spooky Splash%'
                 ORDER BY r.time_seconds ASC
                 LIMIT 1;
             """, (ev_name, gender, latest_meet_id))

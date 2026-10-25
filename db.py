@@ -200,9 +200,17 @@ def init_db(db_path: str = DB_PATH) -> None:
         meet_name TEXT UNIQUE NOT NULL,
         meet_date TEXT,
         location TEXT,
+        is_shs_meet INTEGER DEFAULT 1,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP
     );
     """)
+
+    # Check meets table migrations
+    cur.execute("PRAGMA table_info(meets);")
+    meet_cols = [c[1] for c in cur.fetchall()]
+    if "is_shs_meet" not in meet_cols:
+        cur.execute("ALTER TABLE meets ADD COLUMN is_shs_meet INTEGER DEFAULT 1;")
+    cur.execute("UPDATE meets SET is_shs_meet = 0 WHERE meet_name LIKE '%Spooky Splash%';")
 
     # Individual swim times
     cur.execute("""
@@ -723,9 +731,12 @@ def parse_cl2_content(lines: List[str], team_code: str = "SHS") -> Dict[str, Any
                         else:
                             current_relay["has_prev"] = False
 
+    is_shs_meet = 0 if (filter_names is not None or "Spooky Splash" in meet_name) else 1
+
     return {
         "meet_name": meet_name,
         "meet_date": meet_date,
+        "is_shs_meet": is_shs_meet,
         "swimmers": swimmers_dict,
         "indiv_swims": indiv_swims,
         "relays": relays,
@@ -747,11 +758,12 @@ def import_cl2_file(file_path: str, db_path: str = DB_PATH) -> Dict[str, Any]:
     # 1. Upsert Meet
     meet_id = str(uuid.uuid4())
     cur.execute("""
-    INSERT INTO meets (id, meet_name, meet_date)
-    VALUES (?, ?, ?)
+    INSERT INTO meets (id, meet_name, meet_date, is_shs_meet)
+    VALUES (?, ?, ?, ?)
     ON CONFLICT(meet_name) DO UPDATE SET
-        meet_date = excluded.meet_date;
-    """, (meet_id, data["meet_name"], data["meet_date"]))
+        meet_date = excluded.meet_date,
+        is_shs_meet = excluded.is_shs_meet;
+    """, (meet_id, data["meet_name"], data["meet_date"], data.get("is_shs_meet", 1)))
 
     cur.execute("SELECT id FROM meets WHERE meet_name = ?;", (data["meet_name"],))
     actual_meet_id = cur.fetchone()[0]

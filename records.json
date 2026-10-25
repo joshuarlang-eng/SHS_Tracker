@@ -2,12 +2,12 @@
   "team": "SHS",
   "team_name": "Sardis High School",
   "mascot": "Lions",
-  "last_updated": "2026-10-24T21:04:59.944349",
+  "last_updated": "2026-10-24T21:52:16.539686",
   "latest_meet": {
     "name": "2026 NAHSSL Championships",
     "date": "2026-10-24"
   },
-  "total_records": 28,
+  "total_records": 25,
   "new_records_count": 6,
   "records": [
     {
@@ -112,7 +112,7 @@
       "meet_name": "2026 NAHSSL Championships",
       "meet_date": "2026-10-24",
       "is_new": true,
-      "prev_record": "Prev: 29.55 (Aubrey Lang) [-1.42s]",
+      "prev_record": "Prev: 30.92 (Cora Lang) [-2.79s]",
       "sort_order": 4
     },
     {
@@ -306,26 +306,6 @@
       "sort_order": 12
     },
     {
-      "id": "F_100_im",
-      "gender": "F",
-      "gender_name": "Girls",
-      "event_name": "100 IM",
-      "stroke": "IM",
-      "is_relay": false,
-      "time_seconds": 80.59,
-      "time_formatted": "1:20.59",
-      "swimmer_name": "Cora Lang",
-      "swimmers": [
-        "Cora Lang"
-      ],
-      "relay_legs": null,
-      "meet_name": "2026 SES WAKE-CTA Spooky Splash",
-      "meet_date": "2026-10-03",
-      "is_new": false,
-      "prev_record": null,
-      "sort_order": 13
-    },
-    {
       "id": "F_50_fly",
       "gender": "F",
       "gender_name": "Girls",
@@ -517,15 +497,15 @@
       "event_name": "100 Free",
       "stroke": "Free",
       "is_relay": false,
-      "time_seconds": 53.8,
-      "time_formatted": "53.80",
+      "time_seconds": 54.19,
+      "time_formatted": "54.19",
       "swimmer_name": "Caleb Battles",
       "swimmers": [
         "Caleb Battles"
       ],
       "relay_legs": null,
-      "meet_name": "2026 SES WAKE-CTA Spooky Splash",
-      "meet_date": "2026-10-03",
+      "meet_name": "2025 Season Meet (10/30)",
+      "meet_date": "2025-10-30",
       "is_new": false,
       "prev_record": null,
       "sort_order": 7
@@ -636,64 +616,24 @@
       "sort_order": 11
     },
     {
-      "id": "M_50_fly",
-      "gender": "M",
-      "gender_name": "Boys",
-      "event_name": "50 Fly",
-      "stroke": "Fly",
-      "is_relay": false,
-      "time_seconds": 28.09,
-      "time_formatted": "28.09",
-      "swimmer_name": "Jace Duncan",
-      "swimmers": [
-        "Jace Duncan"
-      ],
-      "relay_legs": null,
-      "meet_name": "2026 SES WAKE-CTA Spooky Splash",
-      "meet_date": "2026-10-03",
-      "is_new": false,
-      "prev_record": null,
-      "sort_order": 14
-    },
-    {
       "id": "M_50_back",
       "gender": "M",
       "gender_name": "Boys",
       "event_name": "50 Back",
       "stroke": "Back",
       "is_relay": false,
-      "time_seconds": 30.4,
-      "time_formatted": "30.40",
-      "swimmer_name": "Jace Duncan",
+      "time_seconds": 37.28,
+      "time_formatted": "37.28",
+      "swimmer_name": "Caleb Battles",
       "swimmers": [
-        "Jace Duncan"
+        "Caleb Battles"
       ],
       "relay_legs": null,
-      "meet_name": "2026 SES WAKE-CTA Spooky Splash",
-      "meet_date": "2026-10-03",
+      "meet_name": "2023 Season Meet (09/04)",
+      "meet_date": "2023-09-04",
       "is_new": false,
       "prev_record": null,
       "sort_order": 15
-    },
-    {
-      "id": "M_50_breast",
-      "gender": "M",
-      "gender_name": "Boys",
-      "event_name": "50 Breast",
-      "stroke": "Breast",
-      "is_relay": false,
-      "time_seconds": 36.27,
-      "time_formatted": "36.27",
-      "swimmer_name": "Jace Duncan",
-      "swimmers": [
-        "Jace Duncan"
-      ],
-      "relay_legs": null,
-      "meet_name": "2026 SES WAKE-CTA Spooky Splash",
-      "meet_date": "2026-10-03",
-      "is_new": false,
-      "prev_record": null,
-      "sort_order": 16
     }
   ]
 }
