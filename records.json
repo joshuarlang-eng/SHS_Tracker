@@ -2,13 +2,13 @@
   "team": "SHS",
   "team_name": "Sardis High School",
   "mascot": "Lions",
-  "last_updated": "2026-10-25T10:48:30.680904",
+  "last_updated": "2026-10-28T02:03:05.792336",
   "latest_meet": {
-    "name": "2026 NAHSSL Championships",
-    "date": "2026-10-24"
+    "name": "2026 Aggie Invitational",
+    "date": "2026-10-27"
   },
   "total_records": 25,
-  "new_records_count": 6,
+  "new_records_count": 4,
   "records": [
     {
       "id": "F_200_medley_relay",
@@ -51,8 +51,8 @@
       ],
       "meet_name": "2026 NAHSSL Championships",
       "meet_date": "2026-10-24",
-      "is_new": true,
-      "prev_record": "Prev: 2:20.98 [-2.43s]",
+      "is_new": false,
+      "prev_record": null,
       "sort_order": 1
     },
     {
@@ -71,8 +71,8 @@
       "relay_legs": null,
       "meet_name": "2026 NAHSSL Championships",
       "meet_date": "2026-10-24",
-      "is_new": true,
-      "prev_record": "Prev: 2:29.52 (Aubrey Lang) [-15.91s]",
+      "is_new": false,
+      "prev_record": null,
       "sort_order": 2
     },
     {
@@ -111,8 +111,8 @@
       "relay_legs": null,
       "meet_name": "2026 NAHSSL Championships",
       "meet_date": "2026-10-24",
-      "is_new": true,
-      "prev_record": "Prev: 30.92 (Cora Lang) [-2.79s]",
+      "is_new": false,
+      "prev_record": null,
       "sort_order": 4
     },
     {
@@ -122,17 +122,17 @@
       "event_name": "100 Fly",
       "stroke": "Fly",
       "is_relay": false,
-      "time_seconds": 67.69,
-      "time_formatted": "1:07.69",
+      "time_seconds": 67.45,
+      "time_formatted": "1:07.45",
       "swimmer_name": "Aubrey Lang",
       "swimmers": [
         "Aubrey Lang"
       ],
       "relay_legs": null,
-      "meet_name": "2025 Season Meet (11/10)",
-      "meet_date": "2025-11-10",
-      "is_new": false,
-      "prev_record": null,
+      "meet_name": "2026 Aggie Invitational",
+      "meet_date": "2026-10-27",
+      "is_new": true,
+      "prev_record": "Prev: 1:07.69 (Aubrey Lang) [-0.24s]",
       "sort_order": 6
     },
     {
@@ -216,8 +216,8 @@
       ],
       "meet_name": "2026 NAHSSL Championships",
       "meet_date": "2026-10-24",
-      "is_new": true,
-      "prev_record": "Prev: 2:07.18 [-3.71s]",
+      "is_new": false,
+      "prev_record": null,
       "sort_order": 9
     },
     {
@@ -227,17 +227,17 @@
       "event_name": "100 Back",
       "stroke": "Back",
       "is_relay": false,
-      "time_seconds": 68.94,
-      "time_formatted": "1:08.94",
+      "time_seconds": 68.52,
+      "time_formatted": "1:08.52",
       "swimmer_name": "Aubrey Lang",
       "swimmers": [
         "Aubrey Lang"
       ],
       "relay_legs": null,
-      "meet_name": "2024 Season Meet (11/14)",
-      "meet_date": "2024-11-14",
-      "is_new": false,
-      "prev_record": null,
+      "meet_name": "2026 Aggie Invitational",
+      "meet_date": "2026-10-27",
+      "is_new": true,
+      "prev_record": "Prev: 1:08.94 (Aubrey Lang) [-0.42s]",
       "sort_order": 10
     },
     {
@@ -457,17 +457,17 @@
       "event_name": "50 Free",
       "stroke": "Free",
       "is_relay": false,
-      "time_seconds": 24.13,
-      "time_formatted": "24.13",
+      "time_seconds": 23.83,
+      "time_formatted": "23.83",
       "swimmer_name": "Caleb Battles",
       "swimmers": [
         "Caleb Battles"
       ],
       "relay_legs": null,
-      "meet_name": "2026 SMPA Aquapalooza",
-      "meet_date": "2026-09-12",
-      "is_new": false,
-      "prev_record": null,
+      "meet_name": "2026 Aggie Invitational",
+      "meet_date": "2026-10-27",
+      "is_new": true,
+      "prev_record": "Prev: 24.13 (Caleb Battles) [-0.30s]",
       "sort_order": 4
     },
     {
@@ -526,8 +526,8 @@
       "relay_legs": null,
       "meet_name": "2026 NAHSSL Championships",
       "meet_date": "2026-10-24",
-      "is_new": true,
-      "prev_record": "Prev: 5:56.05 (Jace Duncan) [-12.38s]",
+      "is_new": false,
+      "prev_record": null,
       "sort_order": 8
     },
     {
@@ -602,17 +602,17 @@
       "event_name": "100 Breast",
       "stroke": "Breast",
       "is_relay": false,
-      "time_seconds": 74.36,
-      "time_formatted": "1:14.36",
+      "time_seconds": 74.31,
+      "time_formatted": "1:14.31",
       "swimmer_name": "Rowan Spears",
       "swimmers": [
         "Rowan Spears"
       ],
       "relay_legs": null,
-      "meet_name": "2026 NAHSSL Championships",
-      "meet_date": "2026-10-24",
+      "meet_name": "2026 Aggie Invitational",
+      "meet_date": "2026-10-27",
       "is_new": true,
-      "prev_record": "Prev: 1:14.51 (Rowan Spears) [-0.15s]",
+      "prev_record": "Prev: 1:14.36 (Rowan Spears) [-0.05s]",
       "sort_order": 11
     },
     {
@@ -684,8 +684,8 @@
           ],
           "meet_name": "2026 NAHSSL Championships",
           "meet_date": "2026-10-24",
-          "is_new": true,
-          "prev_record": "Prev: 2:20.98 [-2.43s]",
+          "is_new": false,
+          "prev_record": null,
           "sort_order": 1
         },
         {
@@ -704,8 +704,8 @@
           "relay_legs": null,
           "meet_name": "2026 NAHSSL Championships",
           "meet_date": "2026-10-24",
-          "is_new": true,
-          "prev_record": "Prev: 2:29.52 (Aubrey Lang) [-15.91s]",
+          "is_new": false,
+          "prev_record": null,
           "sort_order": 2
         },
         {
@@ -744,8 +744,8 @@
           "relay_legs": null,
           "meet_name": "2026 NAHSSL Championships",
           "meet_date": "2026-10-24",
-          "is_new": true,
-          "prev_record": "Prev: 30.92 (Cora Lang) [-2.79s]",
+          "is_new": false,
+          "prev_record": null,
           "sort_order": 4
         },
         {
@@ -755,17 +755,17 @@
           "event_name": "100 Fly",
           "stroke": "Fly",
           "is_relay": false,
-          "time_seconds": 67.69,
-          "time_formatted": "1:07.69",
+          "time_seconds": 67.45,
+          "time_formatted": "1:07.45",
           "swimmer_name": "Aubrey Lang",
           "swimmers": [
             "Aubrey Lang"
           ],
           "relay_legs": null,
-          "meet_name": "2025 Season Meet (11/10)",
-          "meet_date": "2025-11-10",
-          "is_new": false,
-          "prev_record": null,
+          "meet_name": "2026 Aggie Invitational",
+          "meet_date": "2026-10-27",
+          "is_new": true,
+          "prev_record": "Prev: 1:07.69 (Aubrey Lang) [-0.24s]",
           "sort_order": 6
         },
         {
@@ -849,8 +849,8 @@
           ],
           "meet_name": "2026 NAHSSL Championships",
           "meet_date": "2026-10-24",
-          "is_new": true,
-          "prev_record": "Prev: 2:07.18 [-3.71s]",
+          "is_new": false,
+          "prev_record": null,
           "sort_order": 9
         },
         {
@@ -860,17 +860,17 @@
           "event_name": "100 Back",
           "stroke": "Back",
           "is_relay": false,
-          "time_seconds": 68.94,
-          "time_formatted": "1:08.94",
+          "time_seconds": 68.52,
+          "time_formatted": "1:08.52",
           "swimmer_name": "Aubrey Lang",
           "swimmers": [
             "Aubrey Lang"
           ],
           "relay_legs": null,
-          "meet_name": "2024 Season Meet (11/14)",
-          "meet_date": "2024-11-14",
-          "is_new": false,
-          "prev_record": null,
+          "meet_name": "2026 Aggie Invitational",
+          "meet_date": "2026-10-27",
+          "is_new": true,
+          "prev_record": "Prev: 1:08.94 (Aubrey Lang) [-0.42s]",
           "sort_order": 10
         },
         {
@@ -1098,17 +1098,17 @@
           "event_name": "50 Free",
           "stroke": "Free",
           "is_relay": false,
-          "time_seconds": 24.13,
-          "time_formatted": "24.13",
+          "time_seconds": 23.83,
+          "time_formatted": "23.83",
           "swimmer_name": "Caleb Battles",
           "swimmers": [
             "Caleb Battles"
           ],
           "relay_legs": null,
-          "meet_name": "2026 SMPA Aquapalooza",
-          "meet_date": "2026-09-12",
-          "is_new": false,
-          "prev_record": null,
+          "meet_name": "2026 Aggie Invitational",
+          "meet_date": "2026-10-27",
+          "is_new": true,
+          "prev_record": "Prev: 24.13 (Caleb Battles) [-0.30s]",
           "sort_order": 4
         },
         {
@@ -1167,8 +1167,8 @@
           "relay_legs": null,
           "meet_name": "2026 NAHSSL Championships",
           "meet_date": "2026-10-24",
-          "is_new": true,
-          "prev_record": "Prev: 5:56.05 (Jace Duncan) [-12.38s]",
+          "is_new": false,
+          "prev_record": null,
           "sort_order": 8
         },
         {
@@ -1243,17 +1243,17 @@
           "event_name": "100 Breast",
           "stroke": "Breast",
           "is_relay": false,
-          "time_seconds": 74.36,
-          "time_formatted": "1:14.36",
+          "time_seconds": 74.31,
+          "time_formatted": "1:14.31",
           "swimmer_name": "Rowan Spears",
           "swimmers": [
             "Rowan Spears"
           ],
           "relay_legs": null,
-          "meet_name": "2026 NAHSSL Championships",
-          "meet_date": "2026-10-24",
+          "meet_name": "2026 Aggie Invitational",
+          "meet_date": "2026-10-27",
           "is_new": true,
-          "prev_record": "Prev: 1:14.51 (Rowan Spears) [-0.15s]",
+          "prev_record": "Prev: 1:14.36 (Rowan Spears) [-0.05s]",
           "sort_order": 11
         },
         {
