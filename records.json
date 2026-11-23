@@ -2,13 +2,13 @@
   "team": "SHS",
   "team_name": "Sardis High School",
   "mascot": "Lions",
-  "last_updated": "2026-11-11T03:15:17.536471",
+  "last_updated": "2026-11-23T17:33:31.483121",
   "latest_meet": {
-    "name": "2026 Boaz Last Chance Meet",
-    "date": "2026-11-09"
+    "name": "2026 AHSAA State Swim and Dive",
+    "date": "2026-11-20"
   },
   "total_records": 25,
-  "new_records_count": 6,
+  "new_records_count": 4,
   "records": [
     {
       "id": "F_200_medley_relay",
@@ -51,8 +51,8 @@
       ],
       "meet_name": "2026 Boaz Last Chance Meet",
       "meet_date": "2026-11-09",
-      "is_new": true,
-      "prev_record": "Prev: 2:18.55 [-0.38s]",
+      "is_new": false,
+      "prev_record": null,
       "sort_order": 1
     },
     {
@@ -111,8 +111,8 @@
       "relay_legs": null,
       "meet_name": "2026 Boaz Last Chance Meet",
       "meet_date": "2026-11-09",
-      "is_new": true,
-      "prev_record": "Prev: 28.13 (Aubrey Lang) [-0.13s]",
+      "is_new": false,
+      "prev_record": null,
       "sort_order": 4
     },
     {
@@ -122,17 +122,17 @@
       "event_name": "100 Fly",
       "stroke": "Fly",
       "is_relay": false,
-      "time_seconds": 67.45,
-      "time_formatted": "1:07.45",
+      "time_seconds": 64.42,
+      "time_formatted": "1:04.42",
       "swimmer_name": "Aubrey Lang",
       "swimmers": [
         "Aubrey Lang"
       ],
       "relay_legs": null,
-      "meet_name": "2026 Aggie Invitational",
-      "meet_date": "2026-10-27",
-      "is_new": false,
-      "prev_record": null,
+      "meet_name": "2026 AHSAA State Swim and Dive",
+      "meet_date": "2026-11-20",
+      "is_new": true,
+      "prev_record": "Prev: 1:07.45 (Aubrey Lang) [-3.03s]",
       "sort_order": 6
     },
     {
@@ -216,8 +216,8 @@
       ],
       "meet_name": "2026 Boaz Last Chance Meet",
       "meet_date": "2026-11-09",
-      "is_new": true,
-      "prev_record": "Prev: 2:03.47 [-0.81s]",
+      "is_new": false,
+      "prev_record": null,
       "sort_order": 9
     },
     {
@@ -227,17 +227,17 @@
       "event_name": "100 Back",
       "stroke": "Back",
       "is_relay": false,
-      "time_seconds": 68.52,
-      "time_formatted": "1:08.52",
+      "time_seconds": 66.29,
+      "time_formatted": "1:06.29",
       "swimmer_name": "Aubrey Lang",
       "swimmers": [
         "Aubrey Lang"
       ],
       "relay_legs": null,
-      "meet_name": "2026 Aggie Invitational",
-      "meet_date": "2026-10-27",
-      "is_new": false,
-      "prev_record": null,
+      "meet_name": "2026 AHSAA State Swim and Dive",
+      "meet_date": "2026-11-20",
+      "is_new": true,
+      "prev_record": "Prev: 1:08.52 (Aubrey Lang) [-2.23s]",
       "sort_order": 10
     },
     {
@@ -256,8 +256,8 @@
       "relay_legs": null,
       "meet_name": "2026 Boaz Last Chance Meet",
       "meet_date": "2026-11-09",
-      "is_new": true,
-      "prev_record": "Prev: 1:22.24 (Aubrey Lang) [-3.14s]",
+      "is_new": false,
+      "prev_record": null,
       "sort_order": 11
     },
     {
@@ -457,17 +457,17 @@
       "event_name": "50 Free",
       "stroke": "Free",
       "is_relay": false,
-      "time_seconds": 23.44,
-      "time_formatted": "23.44",
+      "time_seconds": 23.21,
+      "time_formatted": "23.21",
       "swimmer_name": "Caleb Battles",
       "swimmers": [
         "Caleb Battles"
       ],
       "relay_legs": null,
-      "meet_name": "2026 Boaz Last Chance Meet",
-      "meet_date": "2026-11-09",
+      "meet_name": "2026 AHSAA State Swim and Dive",
+      "meet_date": "2026-11-20",
       "is_new": true,
-      "prev_record": "Prev: 23.83 (Caleb Battles) [-0.39s]",
+      "prev_record": "Prev: 23.44 (Caleb Battles) [-0.23s]",
       "sort_order": 4
     },
     {
@@ -477,17 +477,17 @@
       "event_name": "100 Fly",
       "stroke": "Fly",
       "is_relay": false,
-      "time_seconds": 60.85,
-      "time_formatted": "1:00.85",
+      "time_seconds": 58.36,
+      "time_formatted": "58.36",
       "swimmer_name": "Caleb Battles",
       "swimmers": [
         "Caleb Battles"
       ],
       "relay_legs": null,
-      "meet_name": "2026 Albertville Invitational",
-      "meet_date": "2026-09-28",
-      "is_new": false,
-      "prev_record": null,
+      "meet_name": "2026 AHSAA State Swim and Dive",
+      "meet_date": "2026-11-20",
+      "is_new": true,
+      "prev_record": "Prev: 1:00.85 (Caleb Battles) [-2.49s]",
       "sort_order": 6
     },
     {
@@ -611,8 +611,8 @@
       "relay_legs": null,
       "meet_name": "2026 Boaz Last Chance Meet",
       "meet_date": "2026-11-09",
-      "is_new": true,
-      "prev_record": "Prev: 1:14.31 (Rowan Spears) [-0.46s]",
+      "is_new": false,
+      "prev_record": null,
       "sort_order": 11
     },
     {
@@ -684,8 +684,8 @@
           ],
           "meet_name": "2026 Boaz Last Chance Meet",
           "meet_date": "2026-11-09",
-          "is_new": true,
-          "prev_record": "Prev: 2:18.55 [-0.38s]",
+          "is_new": false,
+          "prev_record": null,
           "sort_order": 1
         },
         {
@@ -744,8 +744,8 @@
           "relay_legs": null,
           "meet_name": "2026 Boaz Last Chance Meet",
           "meet_date": "2026-11-09",
-          "is_new": true,
-          "prev_record": "Prev: 28.13 (Aubrey Lang) [-0.13s]",
+          "is_new": false,
+          "prev_record": null,
           "sort_order": 4
         },
         {
@@ -755,17 +755,17 @@
           "event_name": "100 Fly",
           "stroke": "Fly",
           "is_relay": false,
-          "time_seconds": 67.45,
-          "time_formatted": "1:07.45",
+          "time_seconds": 64.42,
+          "time_formatted": "1:04.42",
           "swimmer_name": "Aubrey Lang",
           "swimmers": [
             "Aubrey Lang"
           ],
           "relay_legs": null,
-          "meet_name": "2026 Aggie Invitational",
-          "meet_date": "2026-10-27",
-          "is_new": false,
-          "prev_record": null,
+          "meet_name": "2026 AHSAA State Swim and Dive",
+          "meet_date": "2026-11-20",
+          "is_new": true,
+          "prev_record": "Prev: 1:07.45 (Aubrey Lang) [-3.03s]",
           "sort_order": 6
         },
         {
@@ -849,8 +849,8 @@
           ],
           "meet_name": "2026 Boaz Last Chance Meet",
           "meet_date": "2026-11-09",
-          "is_new": true,
-          "prev_record": "Prev: 2:03.47 [-0.81s]",
+          "is_new": false,
+          "prev_record": null,
           "sort_order": 9
         },
         {
@@ -860,17 +860,17 @@
           "event_name": "100 Back",
           "stroke": "Back",
           "is_relay": false,
-          "time_seconds": 68.52,
-          "time_formatted": "1:08.52",
+          "time_seconds": 66.29,
+          "time_formatted": "1:06.29",
           "swimmer_name": "Aubrey Lang",
           "swimmers": [
             "Aubrey Lang"
           ],
           "relay_legs": null,
-          "meet_name": "2026 Aggie Invitational",
-          "meet_date": "2026-10-27",
-          "is_new": false,
-          "prev_record": null,
+          "meet_name": "2026 AHSAA State Swim and Dive",
+          "meet_date": "2026-11-20",
+          "is_new": true,
+          "prev_record": "Prev: 1:08.52 (Aubrey Lang) [-2.23s]",
           "sort_order": 10
         },
         {
@@ -889,8 +889,8 @@
           "relay_legs": null,
           "meet_name": "2026 Boaz Last Chance Meet",
           "meet_date": "2026-11-09",
-          "is_new": true,
-          "prev_record": "Prev: 1:22.24 (Aubrey Lang) [-3.14s]",
+          "is_new": false,
+          "prev_record": null,
           "sort_order": 11
         },
         {
@@ -1098,17 +1098,17 @@
           "event_name": "50 Free",
           "stroke": "Free",
           "is_relay": false,
-          "time_seconds": 23.44,
-          "time_formatted": "23.44",
+          "time_seconds": 23.21,
+          "time_formatted": "23.21",
           "swimmer_name": "Caleb Battles",
           "swimmers": [
             "Caleb Battles"
           ],
           "relay_legs": null,
-          "meet_name": "2026 Boaz Last Chance Meet",
-          "meet_date": "2026-11-09",
+          "meet_name": "2026 AHSAA State Swim and Dive",
+          "meet_date": "2026-11-20",
           "is_new": true,
-          "prev_record": "Prev: 23.83 (Caleb Battles) [-0.39s]",
+          "prev_record": "Prev: 23.44 (Caleb Battles) [-0.23s]",
           "sort_order": 4
         },
         {
@@ -1118,17 +1118,17 @@
           "event_name": "100 Fly",
           "stroke": "Fly",
           "is_relay": false,
-          "time_seconds": 60.85,
-          "time_formatted": "1:00.85",
+          "time_seconds": 58.36,
+          "time_formatted": "58.36",
           "swimmer_name": "Caleb Battles",
           "swimmers": [
             "Caleb Battles"
           ],
           "relay_legs": null,
-          "meet_name": "2026 Albertville Invitational",
-          "meet_date": "2026-09-28",
-          "is_new": false,
-          "prev_record": null,
+          "meet_name": "2026 AHSAA State Swim and Dive",
+          "meet_date": "2026-11-20",
+          "is_new": true,
+          "prev_record": "Prev: 1:00.85 (Caleb Battles) [-2.49s]",
           "sort_order": 6
         },
         {
@@ -1252,8 +1252,8 @@
           "relay_legs": null,
           "meet_name": "2026 Boaz Last Chance Meet",
           "meet_date": "2026-11-09",
-          "is_new": true,
-          "prev_record": "Prev: 1:14.31 (Rowan Spears) [-0.46s]",
+          "is_new": false,
+          "prev_record": null,
           "sort_order": 11
         },
         {
